@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+  Shared layout fragments. Usage in a page:
+
+  <head th:replace="~{fragments/layout :: head('Page Title')}"></head>
+  <body>
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <main class="container"> ...page content... </main>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+  </body>
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' | Graduate Admissions'">Graduate Admissions</title>
+    <link rel="stylesheet" href="../../static/css/style.css" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<header th:fragment="header" class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/" th:href="@{/}">Graduate Admissions</a>
+        <nav class="site-nav">
+            <a href="/" th:href="@{/}">Home</a>
+            <a href="/apply" th:href="@{/apply}">Apply</a>
+            <a href="/professor" th:href="@{/professor}">Professors</a>
+            <a href="/admin" th:href="@{/admin}">Admin</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <h1>Layout preview</h1>
+    <p>Static preview of the shared header and footer. Pages pull in the fragments above and below.</p>
+</main>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="container">
+        SYSC 4806 &middot; Graduate Admissions Management System
+    </div>
+</footer>
+
+</body>
+</html>
