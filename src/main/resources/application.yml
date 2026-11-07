@@ -1,0 +1,13 @@
+spring:
+  mail:
+    username: ${spring-mail-username}
+    password: ${spring-mail-password}
+    host: ${spring-mail-host}
+    port: 587
+    protocol: smtp
+    test-connection: false
+    starttls:
+      enable=true:
+custom:
+  mail:
+    from: ${custom-from-address}
