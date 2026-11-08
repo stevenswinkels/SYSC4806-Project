@@ -32,9 +32,9 @@ public class MailSenderService {
     * Uncomment to test sending mail by just starting the app.
     * useful for testing smtp config.
     * */
-    @EventListener(ApplicationStartedEvent.class)
-    public void sendMail(){
-        sendMail(from,"test","test");
-    }
+//    @EventListener(ApplicationStartedEvent.class)
+//    public void sendMail(){
+//        sendMail(from,"test","test");
+//    }
 
 }
