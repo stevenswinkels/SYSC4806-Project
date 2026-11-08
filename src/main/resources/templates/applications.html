@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluate Applicants</title>
+</head>
+<body>
+<!-- provide a form for the decision the prof can take on the application -->
+<form th:action="@{/evaluations/1/1}" method="post"> <!-- use profid and application id -->
+    <label for="decision">Decision</label>
+    <select name="decision" id="decision">
+        <option th:each="decision : ${decisions}" th:value="|${decision.toString()}|" th:text="|${decision.toString()}|"></option>
+    </select>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>
