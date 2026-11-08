@@ -3,11 +3,15 @@ spring:
     username: ${spring-mail-username}
     password: ${spring-mail-password}
     host: ${spring-mail-host}
-    port: 587
+    port: ${spring-mail-port}
     protocol: smtp
     test-connection: false
-    starttls:
-      enable=true:
+    tls: ${spring-mail-enable-tls}
+    properties.mail.smtp:
+      auth: ${spring-mail-enable-tls}
+      starttls.enable: ${spring-mail-enable-tls}
+      ssl.trust: ${spring-mail-host}
 custom:
   mail:
-    from: ${custom-from-address}
+    from: ${custom-mail-address}
+

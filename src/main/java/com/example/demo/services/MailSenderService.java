@@ -2,6 +2,8 @@ package com.example.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -24,5 +26,15 @@ public class MailSenderService {
 
         mailSender.send(message);
     }
+
+
+    /*
+    * Uncomment to test sending mail by just starting the app.
+    * useful for testing smtp config.
+    * */
+//    @EventListener(ApplicationStartedEvent.class)
+//    public void sendMail(){
+//        sendMail(from,"test","test");
+//    }
 
 }
