@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Application received</title>
+</head>
+<body>
+<h1>Application received</h1>
+<p>Thank you, <span th:text="${applicant.fullName}"></span>.</p>
+<ul>
+  <li>Email: <span th:text="${applicant.email}"></span></li>
+  <li>Research field: <span th:text="${applicant.desiredResearchField}"></span></li>
+  <li>Status: <span th:text="${applicant.status}"></span></li>
+  <li>Submitted: <span th:text="${#temporals.format(applicant.submittedAt, 'yyyy-MM-dd HH:mm')}"></span></li>
+  <li>Preferred professors:
+    <span th:if="${#lists.isEmpty(applicant.preferredProfessors)}">none selected</span>
+    <span th:each="p, st : ${applicant.preferredProfessors}"
+          th:text="${p.name + (st.last ? '' : ', ')}"></span>
+  </li>
+</ul>
+<p><a th:href="@{/apply}">Submit another application</a></p>
+</body>
+</html>
