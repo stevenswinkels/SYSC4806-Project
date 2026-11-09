@@ -26,7 +26,7 @@ public class Applicant {
     @ManyToMany
     private List<Professor> preferredProfessors = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name="assigned_professor_id")
     private Professor assignedProfessor;
 
