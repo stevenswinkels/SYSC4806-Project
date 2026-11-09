@@ -26,6 +26,10 @@ public class Applicant {
     @ManyToMany
     private List<Professor> preferredProfessors = new ArrayList<>();
 
+    @ManyToMany
+    @JoinColumn(name="assigned_professor_id")
+    private Professor assignedProfessor;
+
     public Applicant() {};
 
     public Long getId() {
@@ -82,5 +86,17 @@ public class Applicant {
 
     public void setPreferredProfessors(List<Professor> preferredProfessors) {
         this.preferredProfessors = preferredProfessors;
+    }
+
+    public Professor getAssignedProfessor(){return assignedProfessor;}
+
+    public void assignTo(Professor professor){
+        if (this.assignedProfessor != null) {
+            this.assignedProfessor.getAssignedApplicants().remove(this);
+        }
+        this.assignedProfessor = professor;
+        if (professor != null) {
+            professor.getAssignedApplicants().add(this);
+        }
     }
 }

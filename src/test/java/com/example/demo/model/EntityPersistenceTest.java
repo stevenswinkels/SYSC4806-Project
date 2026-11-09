@@ -72,4 +72,38 @@ class EntityPersistenceTest {
         assertThrows(PersistenceException.class,
                 () -> em.persistAndFlush(bhagya("same@example.com")));
     }
+    @Test
+    void professorHasManyAssignedApplicants() {
+        Professor euler = em.persist(new Professor("Dr. Leonhard Euler", "euler@example.com",
+                new HashSet<>(Set.of("Graph Theory"))));
+
+        Applicant first = bhagya("bhagya@example.com");
+        Applicant second = bhagya("gauss@example.com");
+        first.assignTo(euler);
+        second.assignTo(euler);
+        em.persist(first);
+        em.persist(second);
+        em.flush();
+        em.clear();
+
+        Professor found = em.find(Professor.class, euler.getId());
+        assertEquals(2, found.getAssignedApplicants().size());
+        assertEquals("Dr. Leonhard Euler",
+                em.find(Applicant.class, first.getId()).getAssignedProfessor().getName());
+    }
+
+    @Test
+    void allDecisionStatusesRoundTrip() {
+        for (ApplicationStatus s : new ApplicationStatus[] {
+                ApplicationStatus.DONT_RECOMMEND,
+                ApplicationStatus.RECOMMEND_NO_SUPERVISION,
+                ApplicationStatus.RECOMMEND_NO_FUNDING,
+                ApplicationStatus.RECOMMEND_WITH_FUNDING}) {
+            Applicant a = bhagya(s.name().toLowerCase() + "@example.com");
+            a.setStatus(s);
+            em.persistAndFlush(a);
+            em.clear();
+            assertEquals(s, em.find(Applicant.class, a.getId()).getStatus());
+        }
+    }
 }

@@ -1,7 +1,10 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -14,6 +17,9 @@ public class Professor {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> researchFields = new HashSet<>();
+
+    @OneToMany(mappedBy = "assignedProfessor")
+    private List<Applicant> assignedApplicants = new ArrayList<>();
 
     protected  Professor() {}
 
@@ -30,4 +36,5 @@ public class Professor {
     public void setEmail(String email) { this.email = email; }
     public Set<String> getResearchFields() { return researchFields; }
     public void setResearchFields(Set<String> f) { this.researchFields = f; }
+    public List<Applicant> getAssignedApplicants(){ return assignedApplicants;}
 }
