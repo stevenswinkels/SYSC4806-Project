@@ -24,7 +24,11 @@ public class Applicant {
     private LocalDateTime submittedAt;
 
     @ManyToMany
-    private List<Professor> preferedProfessor = new ArrayList<>();
+    private List<Professor> preferredProfessors = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name="assigned_professor_id")
+    private Professor assignedProfessor;
 
     public Applicant() {};
 
@@ -76,11 +80,23 @@ public class Applicant {
         this.submittedAt = submittedAt;
     }
 
-    public List<Professor> getPreferedProfessor() {
-        return preferedProfessor;
+    public List<Professor> getPreferredProfessors() {
+        return preferredProfessors;
     }
 
-    public void setPreferedProfessor(List<Professor> preferedProfessor) {
-        this.preferedProfessor = preferedProfessor;
+    public void setPreferredProfessors(List<Professor> preferredProfessors) {
+        this.preferredProfessors = preferredProfessors;
+    }
+
+    public Professor getAssignedProfessor(){return assignedProfessor;}
+
+    public void assignTo(Professor professor){
+        if (this.assignedProfessor != null) {
+            this.assignedProfessor.getAssignedApplicants().remove(this);
+        }
+        this.assignedProfessor = professor;
+        if (professor != null) {
+            professor.getAssignedApplicants().add(this);
+        }
     }
 }
