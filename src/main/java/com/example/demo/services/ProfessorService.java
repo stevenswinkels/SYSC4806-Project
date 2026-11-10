@@ -1,11 +1,15 @@
 package com.example.demo.services;
 
+import com.example.demo.dto.ApplicantDTO;
+import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.ProfessorRepository;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumSet;
@@ -26,8 +30,29 @@ public class ProfessorService {
     @Autowired
     private ProfessorRepository professorRepository;
 
-    public Optional<Professor> getProf(Long id) {
-        return professorRepository.findById(id);
+    public ProfDTO getProf(Long id) throws NotFoundException {
+        Optional<Professor> prof = professorRepository.findById(id);
+        if (!prof.isPresent()) {
+            throw new NotFoundException("professor with ID " + id + " not found");
+        }
+        return new ProfDTO(prof.get());
+    }
+
+    public ApplicantDTO getApplicantAssignedToProf(Long appId, Long profId) throws NotFoundException {
+        Optional<Professor> prof = professorRepository.findById(profId);
+
+        if (!prof.isPresent()) {
+            throw new NotFoundException("professor with ID " + profId + " not found");
+        }
+        for (Applicant applicant : prof.get().getAssignedApplicants()) {
+            if (applicant.getId().equals(appId)) {
+                return new ApplicantDTO(applicant, prof.get());
+            }
+        }
+
+        throw new NotFoundException("Applicant with ID " + appId+ " not found in prof with ID " + profId + "'s " +
+                "assigned applicants");
+
     }
 
     public Set<ApplicationStatus> getVerdicts() {
@@ -41,18 +66,16 @@ public class ProfessorService {
      * @param verdict the verdict being assigned
      */
     public void assignVerdict(Long profID, Long  applicantID, ApplicationStatus verdict){
-        Optional<Professor> professor = professorRepository.findById(profID);
         Optional<Applicant> applicantOpt = applicantRepository.findById(applicantID);
-        if(professor.isPresent() && applicantOpt.isPresent()){
+        if(applicantOpt.isPresent() && applicantOpt.get().getAssignedProfessor() != null){
             Applicant applicant = applicantOpt.get();
-            Professor prof = professor.get();
-        if(verdicts.contains(verdict) && prof.getAssignedApplicants().contains(applicant)) {
-            applicant.setStatus(verdict);
-            prof.getAssignedApplicants().remove(applicant);
 
-            applicantRepository.save(applicant);
-            professorRepository.save(prof);
-        }
+            if(verdicts.contains(verdict) && applicant.getAssignedProfessor().getId().equals(profID)) {
+                applicant.setStatus(verdict);
+                applicantRepository.save(applicant);
+                // remove assignment
+                applicant.assignTo(null);
+            }
 
         }
     }

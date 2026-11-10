@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
@@ -31,6 +32,7 @@ class ProfessorServiceTest {
     ApplicantRepository applicants;
     @Mock
     ProfessorRepository professors;
+
     @InjectMocks
     ProfessorService service;
 
@@ -40,10 +42,13 @@ class ProfessorServiceTest {
 
     @BeforeEach
     void setUp() {
-        applicant = new Applicant();
-        applicant.setId(1L);
-        applicant.setFullName("name1");
-        applicant.setEmail("applicant@example.com");
+        applicant = mock(Applicant.class);
+        professor = mock(Professor.class);
+
+        when(applicant.getId()).thenReturn(1L);
+        when(applicant.getFullName()).thenReturn("name1");
+        when(applicant.getEmail()).thenReturn("applicant@example.com");
+        when(applicant.getAssignedProfessor()).thenReturn(professor);
 
         List<Applicant> applicantsList = new ArrayList<>();
         applicantsList.add(applicant);
@@ -51,7 +56,7 @@ class ProfessorServiceTest {
         applicant2 = new Applicant();
         applicant2.setId(2L);
 
-        professor = mock(Professor.class);
+
         when(professor.getId()).thenReturn(1L);
         when(professor.getAssignedApplicants()).thenReturn(applicantsList);
 
@@ -75,9 +80,17 @@ class ProfessorServiceTest {
     }
 
     @Test
-    void getProf(){
-        assertSame(service.getProf(1L).get(), professor);
-        assertFalse(service.getProf(2L).isPresent());
+    void getProf() throws NotFoundException{
+        assertEquals(service.getProf(1L).getId(), new ProfDTO(professor).getId());
+        assertThrows(NotFoundException.class, () -> service.getProf(2L));
+    }
+
+    @Test
+    void getApplicant() throws NotFoundException{
+        assertThrows(NotFoundException.class, () -> service.getApplicantAssignedToProf(2L, 1L));
+        assertThrows(NotFoundException.class, () -> service.getApplicantAssignedToProf(1L, 2L));
+        assertThrows(NotFoundException.class, () -> service.getApplicantAssignedToProf(3L, 1L));
+        assertEquals(1L, service.getApplicantAssignedToProf(1L, 1L).getId());
     }
 
     @ParameterizedTest
@@ -85,9 +98,7 @@ class ProfessorServiceTest {
             "RECOMMEND_NO_SUPERVISION", "RECOMMEND_WITH_FUNDING"})
     void applyValidVerdict(ApplicationStatus status) {
         service.assignVerdict(professor.getId(), 1L, status);
-        assertEquals(status, applicant.getStatus());
-        assertTrue(professor.getAssignedApplicants().isEmpty());
-        Mockito.verify(professors).save(professor);
+        Mockito.verify(applicant).assignTo(null);
         Mockito.verify(applicants).save(applicant);
     }
 

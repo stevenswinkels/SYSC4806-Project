@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.model.Professor;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
@@ -57,11 +59,20 @@ public class MailSenderService {
         context.setVariable("link", link);
         context.setVariable("msg", msg);
 
-        String htmlContent = templateEngine.process("link-email", context);
+        String htmlContent = templateEngine.process("email/link-email", context);
 
         sendHTML(to, subject, htmlContent);
     }
 
+
+    public void sendNotificationOfAssignment(Professor prof){
+        String link =
+                ServletUriComponentsBuilder.fromCurrentContextPath().path("/evaluations/"+prof.getId().toString()).toUriString();
+        System.out.println("Sending email to "+link);
+        String subject = "New Applications to Review";
+        String msg = "Hello " + prof.getName() + ", click the link below to review your new applications";
+        sendLink(prof.getEmail(), subject, msg, link);
+    }
 
     /*
     * Uncomment to test sending mail by just starting the app.

@@ -2,16 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Evaluate Applicants</title>
+    <title>Evaluate This Applicant</title>
 </head>
 <body>
-<!-- provide a form for the decision the prof can take on the application -->
-<form th:action="@{/evaluations/1/1}" method="post"> <!-- use profid and application id -->
-    <label for="decision">Decision</label>
-    <select name="decision" id="decision">
-        <option th:each="decision : ${decisions}" th:value="|${decision.toString()}|" th:text="|${decision.toString()}|"></option>
-    </select>
-    <input type="submit" value="Submit">
-</form>
+
+<div>
+    <!-- Display the application -->
+    <table>
+        <tr>
+            <th>Name</th>
+            <td th:text="${applicant.getFullName()}" id="name"></td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td th:text="${applicant.getEmail()}" id="email"></td>
+        </tr>
+        <tr>
+            <th>Desired Research Field</th>
+            <td th:text="${applicant.getDesiredResearchField()}" id="researchField"></td>
+        </tr>
+        <tr>
+            <th>Application Submitted At</th>
+            <td th:text="${applicant.getSubmittedAt()}" id="submittedAt"></td>
+        </tr>
+    </table>
+
+</div>
+<div>
+    <!-- provide a form for the decision the prof can take on the application -->
+    <form th:action="@{/evaluations/__${prof.getId()}__/__${applicant.getId()}__}" method="post">
+        <label for="decision">Decision</label>
+        <select name="decision" id="decision">
+            <option th:each="decision : ${decisions}" th:value="|${decision.toString()}|" th:text="|${decision.toString()}|"></option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
 </body>
 </html>
