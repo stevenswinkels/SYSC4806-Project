@@ -27,14 +27,14 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ProfessorServiceTest {
+class ApplicantReviewServiceTest {
     @Mock
     ApplicantRepository applicants;
     @Mock
     ProfessorRepository professors;
 
     @InjectMocks
-    ProfessorService service;
+    ApplicantReviewService service;
 
     Professor professor;
     Applicant applicant;

@@ -7,9 +7,7 @@ import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.ProfessorRepository;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumSet;
@@ -17,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class ProfessorService {
+public class ApplicantReviewService {
 
     // Verdicts that a prof can give for an application
     private final Set<ApplicationStatus> verdicts = EnumSet.of(ApplicationStatus.DONT_RECOMMEND,
