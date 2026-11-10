@@ -22,9 +22,6 @@ public class ApplicantReviewController {
     @Autowired
     private ApplicantReviewService applicantReviewService;
 
-    @Autowired
-    private MailSenderService mailSenderService;
-
     @GetMapping("/evaluations/{profID}/")
     String evaluations(@PathVariable("profID") Long profID){
         return "redirect:/evaluations/{profID}";
@@ -36,7 +33,7 @@ public class ApplicantReviewController {
         try{
         ProfDTO prof = applicantReviewService.getProf(profID);
             model.addAttribute("prof", prof);
-            return "evaluations";
+            return "profs-applicants";
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -57,14 +54,14 @@ public class ApplicantReviewController {
         {
                     model.addAttribute("prof", prof);
                     model.addAttribute("applicant", applicant);
-                    model.addAttribute("decisions", applicantReviewService.getVerdicts());
-                    return "applications";
+                    model.addAttribute("decisions", ApplicantReviewService.getVerdicts());
+                    return "review-applicant";
                 }
         }catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
-        return "redirect:/evaluations/{profID}/";
+        return "redirect:/evaluations/{profID}";
 
 
 

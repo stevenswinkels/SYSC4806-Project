@@ -12,7 +12,7 @@ public class ApplicantDTO {
     private LocalDateTime submittedAt;
     private Professor AssignedProf;
     private String desiredResearchField;
-    public ApplicantDTO(Applicant applicant, Professor prof) {
+    public ApplicantDTO(Applicant applicant) {
         this.id = applicant.getId();
         this.FullName = applicant.getFullName();
         this.Email = applicant.getEmail();

@@ -18,7 +18,7 @@ import java.util.Set;
 public class ApplicantReviewService {
 
     // Verdicts that a prof can give for an application
-    private final Set<ApplicationStatus> verdicts = EnumSet.of(ApplicationStatus.DONT_RECOMMEND,
+    private static final Set<ApplicationStatus> verdicts = EnumSet.of(ApplicationStatus.DONT_RECOMMEND,
             ApplicationStatus.RECOMMEND_NO_FUNDING, ApplicationStatus.RECOMMEND_NO_SUPERVISION,
             ApplicationStatus.RECOMMEND_WITH_FUNDING);
 
@@ -44,7 +44,7 @@ public class ApplicantReviewService {
         }
         for (Applicant applicant : prof.get().getAssignedApplicants()) {
             if (applicant.getId().equals(appId)) {
-                return new ApplicantDTO(applicant, prof.get());
+                return new ApplicantDTO(applicant);
             }
         }
 
@@ -53,7 +53,7 @@ public class ApplicantReviewService {
 
     }
 
-    public Set<ApplicationStatus> getVerdicts() {
+    public static Set<ApplicationStatus> getVerdicts() {
         return EnumSet.copyOf(verdicts);
     }
 
