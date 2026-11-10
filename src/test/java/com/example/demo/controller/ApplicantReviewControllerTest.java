@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ApplicantDTO;
 import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.Applicant;
+import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import com.example.demo.services.ApplicantReviewService;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -104,6 +106,12 @@ class ApplicantReviewControllerTest {
     void applicantReviewPageValidProfIdValidAppIdRedirect() throws Exception {
         mvc.perform(get("/evaluations/1/1/")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/evaluations/1/1"));
+    }
+
+    @Test
+    void submitReviewRedirects() throws Exception {
+        mvc.perform(post("/evaluations/1/1").param("decision", ApplicationStatus.DONT_RECOMMEND.toString())).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/evaluations/1"));
     }
 
 }

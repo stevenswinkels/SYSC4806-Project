@@ -88,6 +88,6 @@ public class ApplicantReviewController {
 
         System.out.println("decision: " + decision);
 
-        return "redirect:/evaluations/{profID}/";
+        return "redirect:/evaluations/{profID}";
     }
 }
