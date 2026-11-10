@@ -3,6 +3,8 @@ package com.example.demo.repository;
 import com.example.demo.model.Professor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProfessorRepository extends JpaRepository<Professor, Long> {
+import java.util.Optional;
 
+public interface ProfessorRepository extends JpaRepository<Professor, Long> {
+    public Optional<Professor> findById(long id);
 }
