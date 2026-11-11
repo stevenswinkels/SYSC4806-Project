@@ -1,4 +1,4 @@
-/* Shared styles for all pages. */
+/* shared styles used by every page */
 
 :root {
     --primary: #1f4e79;
@@ -37,7 +37,7 @@ main.container {
     padding-bottom: 24px;
 }
 
-/* Header and navigation */
+/* header and nav bar */
 
 .site-header {
     background: var(--primary);
@@ -75,7 +75,7 @@ main.container {
     text-decoration: underline;
 }
 
-/* Footer */
+/* footer */
 
 .site-footer {
     border-top: 1px solid var(--border);
@@ -84,7 +84,7 @@ main.container {
     padding: 16px 0;
 }
 
-/* Tables (wrap wide tables in .table-wrap so they scroll instead of the page) */
+/* tables, wrap wide ones in .table-wrap so they scroll instead of the whole page */
 
 .table-wrap {
     overflow-x: auto;
@@ -106,7 +106,7 @@ th {
     background: #eef2f6;
 }
 
-/* Forms */
+/* forms */
 
 label {
     display: block;
@@ -123,8 +123,18 @@ input, select, textarea {
     font: inherit;
 }
 
-button, .button {
+input[type="checkbox"] {
+    width: auto;
+}
+
+fieldset label {
+    display: inline;
+    font-weight: normal;
+}
+
+button, .button, input[type="submit"] {
     display: inline-block;
+    width: auto;
     margin-top: 16px;
     padding: 8px 16px;
     background: var(--primary);
@@ -136,11 +146,11 @@ button, .button {
     cursor: pointer;
 }
 
-button:hover, .button:hover {
+button:hover, .button:hover, input[type="submit"]:hover {
     background: var(--primary-dark);
 }
 
-/* Small one-line forms, e.g. filters and per-row actions in tables */
+/* one line forms, like the filter box and the route form in tables */
 
 .inline-form {
     display: flex;

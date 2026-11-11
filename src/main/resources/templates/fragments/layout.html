@@ -1,14 +1,5 @@
 <!DOCTYPE html>
-<!--
-  Shared layout fragments. Usage in a page:
-
-  <head th:replace="~{fragments/layout :: head('Page Title')}"></head>
-  <body>
-    <header th:replace="~{fragments/layout :: header}"></header>
-    <main class="container"> ...page content... </main>
-    <footer th:replace="~{fragments/layout :: footer}"></footer>
-  </body>
--->
+<!-- shared head, header and footer for every page. pull them into a page with th:replace, see index.html for an example -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:fragment="head(title)">
@@ -26,12 +17,12 @@
         <nav class="site-nav">
             <a href="/" th:href="@{/}">Home</a>
             <a href="/apply" th:href="@{/apply}">Apply</a>
-            <a href="/professor" th:href="@{/professor}">Professors</a>
-            <a href="/admin" th:href="@{/admin}">Admin</a>
+            <a href="/admin/applications" th:href="@{/admin/applications}">Admin</a>
         </nav>
     </div>
 </header>
 
+<!-- only shows up when opening this file directly, pages use their own main -->
 <main class="container">
     <h1>Layout preview</h1>
     <p>Static preview of the shared header and footer. Pages pull in the fragments above and below.</p>

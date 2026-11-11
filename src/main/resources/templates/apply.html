@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Graduate Application</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Apply')}"></head>
 <body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
 <h1>Graduate Application</h1>
 
 <form th:action="@{/apply}" th:object="${form}" method="post">
@@ -35,5 +35,8 @@
 
     <p><button type="submit">Submit application</button></p>
 </form>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
