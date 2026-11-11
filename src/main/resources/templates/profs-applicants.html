@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluate Applicants</title>
+</head>
+<body>
+<div>
+    <p th:text="|Hello ${prof.getName()}!|"></p>
+    <p th:text="|You have ${prof.getApplicants().size()} applications to review|"></p>
+</div>
+<!-- List out the applications assigned to the prof that haven't been evaluated yet -->
+<div th:if="${prof.getApplicants().size() > 0}">
+    <table>
+        <thead>Applications To Review</thead>
+        <tbody>
+        <tr
+            th:each="app : ${prof.getApplicants()}">
+            <td th:text="${app.getFullName()}">
+                <a th:href="@{/evaluations/__${prof.getId()}__/__${app.getId()}__}">View Application</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

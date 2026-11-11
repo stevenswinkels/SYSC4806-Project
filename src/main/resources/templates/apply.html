@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Graduate Application</title>
+</head>
+<body>
+<h1>Graduate Application</h1>
+
+<form th:action="@{/apply}" th:object="${form}" method="post">
+    <p>
+        <label for="fullName">Full name</label>
+        <input id="fullName" type="text" th:field="*{fullName}">
+        <span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></span>
+    </p>
+    <p>
+        <label for="email">Email</label>
+        <input id="email" type="text" th:field="*{email}">
+        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+    </p>
+    <p>
+        <label for="desiredResearchField">Desired research field</label>
+        <input id="desiredResearchField" type="text" th:field="*{desiredResearchField}">
+        <span th:if="${#fields.hasErrors('desiredResearchField')}" th:errors="*{desiredResearchField}"></span>
+    </p>
+
+    <fieldset>
+        <legend>Professors you want to work with</legend>
+        <div th:each="p : ${professors}">
+            <input type="checkbox" th:field="*{professorIds}" th:value="${p.id}">
+            <label th:for="${#ids.prev('professorIds')}"
+                   th:text="${p.name + ' (' + #strings.setJoin(p.researchFields, ', ') + ')'}"></label>
+        </div>
+    </fieldset>
+
+    <p><button type="submit">Submit application</button></p>
+</form>
+</body>
+</html>
