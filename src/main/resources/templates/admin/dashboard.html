@@ -1,13 +1,5 @@
 <!DOCTYPE html>
-<!--
-  Admin dashboard (#7). Expected model attributes (controller not written yet, waiting on #1/#4):
-    applications : List<Application>  - each has id, applicant.name, applicant.email, researchField,
-                                         preferredProfessors (Professor list), assignedProfessor, status
-    professors   : List<Professor>    - each has id, name, researchField
-  Filter: GET  /admin?field=...
-  Route:  POST /admin/applications/{id}/route  with form param professorId
-  Rows marked th:remove="all" are sample data for static preview only.
--->
+<!-- admin dashboard, needs "applications" (list of Applicant) and "professors" (list of Professor) from the controller -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('Admin Dashboard')}">
     <link rel="stylesheet" href="../../static/css/style.css">
@@ -18,6 +10,7 @@
 <main class="container">
     <h1>Submitted Applications</h1>
 
+    <!-- filter the applications by research field -->
     <form class="inline-form" method="get" action="/admin" th:action="@{/admin}">
         <input type="text" name="field" placeholder="Filter by research field"
                th:value="${param.field}">
@@ -41,25 +34,27 @@
         </thead>
         <tbody>
         <tr th:each="app : ${applications}">
-            <td th:text="${app.applicant.name}">Jane Doe</td>
-            <td th:text="${app.applicant.email}">jane@example.com</td>
-            <td th:text="${app.researchField}">Machine Learning</td>
+            <td th:text="${app.fullName}">Jane Doe</td>
+            <td th:text="${app.email}">jane@example.com</td>
+            <td th:text="${app.desiredResearchField}">Machine Learning</td>
             <td th:text="${#strings.listJoin(app.preferredProfessors.![name], ', ')}">Prof. Smith, Prof. Lee</td>
             <td th:text="${app.status}">SUBMITTED</td>
             <td>
+                <!-- show the assigned prof, or a form to route the application to one if it hasn't been sent yet -->
                 <span th:if="${app.assignedProfessor != null}"
                       th:text="${app.assignedProfessor.name}">Prof. Smith</span>
-                <form th:if="${app.assignedProfessor == null}" class="inline-form" method="post"
+                <form th:if="${app.assignedProfessor == null and app.status.name() == 'SUBMITTED'}" class="inline-form" method="post"
                       th:action="@{/admin/applications/{id}/route(id=${app.id})}">
                     <select name="professorId">
                         <option th:each="prof : ${professors}"
                                 th:value="${prof.id}"
-                                th:text="${prof.name + ' (' + prof.researchField + ')'}">Prof. Smith (Machine Learning)</option>
+                                th:text="${prof.name + ' (' + #strings.setJoin(prof.researchFields, ', ') + ')'}">Prof. Smith (Machine Learning)</option>
                     </select>
                     <button type="submit">Route</button>
                 </form>
             </td>
         </tr>
+        <!-- sample row, only shows up when opening this file directly -->
         <tr th:remove="all">
             <td>John Roe</td>
             <td>john@example.com</td>
