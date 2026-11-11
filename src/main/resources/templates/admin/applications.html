@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Admin - Applications</title></head>
+<body>
+<h1>Applications with professor recommendations</h1>
+<p th:if="${applicants.isEmpty()}">No recommendations yet.</p>
+<table th:if="${!applicants.isEmpty()}">
+    <thead>
+    <tr><th>Applicant</th><th>Research field</th><th>Professor recommendation</th><th>Final decision</th><th></th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="app : ${applicants}">
+        <td th:text="${app.fullName}"></td>
+        <td th:text="${app.desiredResearchField}"></td>
+        <td th:text="${app.status}"></td>
+        <td th:text="${app.finalDecision != null} ? ${app.finalDecision} : 'PENDING'"></td>
+        <td><a th:href="@{/admin/applications/{id}(id=${app.id})}">Review</a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

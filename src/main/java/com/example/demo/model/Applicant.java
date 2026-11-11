@@ -30,6 +30,9 @@ public class Applicant {
     @JoinColumn(name="assigned_professor_id")
     private Professor assignedProfessor;
 
+    @Enumerated(EnumType.STRING)
+    private FinalDecision finalDecision;   // null = admin hasn't decided yet
+
     public Applicant() {};
 
     public Long getId() {
@@ -98,5 +101,13 @@ public class Applicant {
         if (professor != null) {
             professor.getAssignedApplicants().add(this);
         }
+    }
+
+    public FinalDecision getFinalDecision() {
+        return finalDecision;
+    }
+
+    public void setFinalDecision(FinalDecision finalDecision) {
+        this.finalDecision = finalDecision;
     }
 }
