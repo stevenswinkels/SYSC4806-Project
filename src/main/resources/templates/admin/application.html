@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Admin - Final Decision</title></head>
+<body>
+<a th:href="@{/admin/applications}">Back to list</a>
+<table>
+    <tr><th>Name</th><td th:text="${applicant.fullName}" id="name"></td></tr>
+    <tr><th>Email</th><td th:text="${applicant.email}" id="email"></td></tr>
+    <tr><th>Desired research field</th><td th:text="${applicant.desiredResearchField}" id="researchField"></td></tr>
+    <tr><th>Submitted at</th><td th:text="${applicant.submittedAt}" id="submittedAt"></td></tr>
+    <tr><th>Professor recommendation</th><td th:text="${applicant.status}" id="recommendation"></td></tr>
+    <tr><th>Final decision</th>
+        <td id="finalDecision" th:text="${applicant.finalDecision != null} ? ${applicant.finalDecision} : 'PENDING'"></td></tr>
+</table>
+
+<form th:action="@{/admin/applications/{id}/decision(id=${applicant.id})}" method="post">
+    <label for="decision">Final decision</label>
+    <select name="decision" id="decision">
+        <option th:each="d : ${decisions}" th:value="${d}" th:text="${d}"></option>
+    </select>
+    <input type="submit" value="Save decision">
+</form>
+</body>
+</html>
