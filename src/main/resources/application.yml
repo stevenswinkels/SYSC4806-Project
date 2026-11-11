@@ -3,7 +3,7 @@ spring:
     username: ${spring-mail-username:user}
     password: ${spring-mail-password:password}
     host: ${spring-mail-host:localhost}
-    port: ${spring-mail-port:25}
+    port: ${spring-mail-port:8025}
     protocol: smtp
     test-connection: false
     tls: ${spring-mail-enable-tls:false}

@@ -1,6 +1,6 @@
 package com.example.demo.services;
 
-import com.example.demo.service.ProfessorService;
+import com.example.demo.services.ProfessorService;
 import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ProfessorRepository;
