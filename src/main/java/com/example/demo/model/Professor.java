@@ -26,7 +26,7 @@ public class Professor {
     public Professor(String name, String email, Set<String> researchFields){
         this.name = name;
         this.email = email;
-        this.researchFields = researchFields;
+        this.researchFields = (researchFields != null) ? new HashSet<>(researchFields) : new HashSet<>();
     }
 
     public Long getId() { return id; }
@@ -35,6 +35,19 @@ public class Professor {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public Set<String> getResearchFields() { return researchFields; }
-    public void setResearchFields(Set<String> f) { this.researchFields = f; }
+    public void setResearchFields(Set<String> fields) { 
+        this.researchFields.clear();
+        if (fields != null) {
+            this.researchFields.addAll(fields);
+        }
+    }
+    public void addResearchField(String field) {
+        if (field != null && !field.trim().isEmpty()) {
+            this.researchFields.add(field.trim());
+        }
+    }
+    public void removeResearchField(String field) {
+        this.researchFields.remove(field);
+    }
     public List<Applicant> getAssignedApplicants(){ return assignedApplicants;}
 }
