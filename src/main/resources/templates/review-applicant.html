@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Evaluate This Applicant</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Evaluate Applicant')}"></head>
 <body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
 
 <div>
     <!-- Display the application -->
@@ -39,5 +39,8 @@
     </form>
 </div>
 
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

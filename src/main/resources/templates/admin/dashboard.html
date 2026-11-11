@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- admin dashboard, needs "applications" (list of Applicant) and "professors" (list of Professor) from the controller -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}">
+    <link rel="stylesheet" href="../../static/css/style.css">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1>Submitted Applications</h1>
+
+    <!-- filter the applications by research field -->
+    <form class="inline-form" method="get" action="/admin" th:action="@{/admin}">
+        <input type="text" name="field" placeholder="Filter by research field"
+               th:value="${param.field}">
+        <button type="submit">Filter</button>
+        <a href="/admin" th:href="@{/admin}">Clear</a>
+    </form>
+
+    <p th:if="${#lists.isEmpty(applications)}">No applications found.</p>
+
+    <div class="table-wrap" th:unless="${#lists.isEmpty(applications)}">
+    <table>
+        <thead>
+        <tr>
+            <th>Applicant</th>
+            <th>Email</th>
+            <th>Research Field</th>
+            <th>Preferred Professors</th>
+            <th>Status</th>
+            <th>Assigned Professor</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="app : ${applications}">
+            <td th:text="${app.fullName}">Jane Doe</td>
+            <td th:text="${app.email}">jane@example.com</td>
+            <td th:text="${app.desiredResearchField}">Machine Learning</td>
+            <td th:text="${#strings.listJoin(app.preferredProfessors.![name], ', ')}">Prof. Smith, Prof. Lee</td>
+            <td th:text="${app.status}">SUBMITTED</td>
+            <td>
+                <!-- show the assigned prof, or a form to route the application to one if it hasn't been sent yet -->
+                <span th:if="${app.assignedProfessor != null}"
+                      th:text="${app.assignedProfessor.name}">Prof. Smith</span>
+                <form th:if="${app.assignedProfessor == null and app.status.name() == 'SUBMITTED'}" class="inline-form" method="post"
+                      th:action="@{/admin/applications/{id}/route(id=${app.id})}">
+                    <select name="professorId">
+                        <option th:each="prof : ${professors}"
+                                th:value="${prof.id}"
+                                th:text="${prof.name + ' (' + #strings.setJoin(prof.researchFields, ', ') + ')'}">Prof. Smith (Machine Learning)</option>
+                    </select>
+                    <button type="submit">Route</button>
+                </form>
+            </td>
+        </tr>
+        <!-- sample row, only shows up when opening this file directly -->
+        <tr th:remove="all">
+            <td>John Roe</td>
+            <td>john@example.com</td>
+            <td>Networks</td>
+            <td>Prof. Lee</td>
+            <td>ROUTED</td>
+            <td>Prof. Lee</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

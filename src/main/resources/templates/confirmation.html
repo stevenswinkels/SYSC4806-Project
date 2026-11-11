@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>Application received</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Application Received')}"></head>
 <body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
 <h1>Application received</h1>
 <p>Thank you, <span th:text="${applicant.fullName}"></span>.</p>
 <ul>
@@ -19,5 +19,8 @@
   </li>
 </ul>
 <p><a th:href="@{/apply}">Submit another application</a></p>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
