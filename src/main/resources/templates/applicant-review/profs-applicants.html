@@ -17,8 +17,11 @@
         <tr
             th:each="app : ${prof.getApplicants()}">
             <td th:text="${app.getFullName()}">
+            </td>
+            <td>
                 <a th:href="@{/evaluations/__${prof.getId()}__/__${app.getId()}__}">View Application</a>
             </td>
+
         </tr>
         </tbody>
     </table>

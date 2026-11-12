@@ -33,7 +33,7 @@ public class ApplicantReviewController {
         try{
         ProfDTO prof = applicantReviewService.getProf(profID);
             model.addAttribute("prof", prof);
-            return "profs-applicants";
+            return "applicant-review/profs-applicants";
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -55,7 +55,7 @@ public class ApplicantReviewController {
                     model.addAttribute("prof", prof);
                     model.addAttribute("applicant", applicant);
                     model.addAttribute("decisions", ApplicantReviewService.getVerdicts());
-                    return "review-applicant";
+                    return "applicant-review/review-applicant";
                 }
         }catch (Exception e) {
             System.out.println(e.getMessage());
