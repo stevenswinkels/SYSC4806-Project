@@ -68,10 +68,11 @@ class ApplicantReviewControllerTest {
     @Test
     void evaluationsPageValidProfId() throws Exception {
         mvc.perform(get("/evaluations/1")).andExpect(status().isOk())
-                .andExpect(view().name("profs-applicants"))
+                .andExpect(view().name("applicant-review/profs-applicants"))
                 .andExpect(model().attributeExists("prof"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("prof name")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("John Doe")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("John Doe")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("View Application")));
     }
 
     @Test
@@ -89,7 +90,7 @@ class ApplicantReviewControllerTest {
     @Test
     void applicantReviewPageValidProfIdValidAppId() throws Exception {
         mvc.perform(get("/evaluations/1/1")).andExpect(status().isOk())
-                .andExpect(view().name("review-applicant"))
+                .andExpect(view().name("applicant-review/review-applicant"))
                 .andExpect(model().attributeExists("applicant"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("John Doe")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("student@example.org")))
