@@ -114,4 +114,11 @@ class ApplicantReviewControllerTest {
                 .andExpect(redirectedUrl("/evaluations/1"));
     }
 
+    @Test
+    void submitReviewCallsService() throws Exception {
+        mvc.perform(post("/evaluations/1/1").param("decision", "DONT_RECOMMEND"))
+                .andExpect(status().is3xxRedirection());
+
+        org.mockito.Mockito.verify(service).assignVerdict(1L, 1L, ApplicationStatus.DONT_RECOMMEND);
+    }
 }
