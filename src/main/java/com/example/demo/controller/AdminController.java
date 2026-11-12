@@ -5,6 +5,7 @@ import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.ProfessorRepository;
+import com.example.demo.services.MailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,9 @@ public class AdminController {
     @Autowired
     private ProfessorRepository professorRepository;
 
+    @Autowired
+    private MailSenderService mailSenderService;
+
     // list all applications, or only the ones whose research field contains the filter
     @GetMapping("/admin")
     String dashboard(@RequestParam(name = "field", required = false) String field, Model model) {
@@ -35,7 +39,7 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    // send the application to the chosen prof
+    // send the application to the chosen prof and email them about it
     @PostMapping("/admin/applications/{id}/route")
     String route(@PathVariable("id") Long id, @RequestParam("professorId") Long professorId) {
         Applicant applicant = applicantRepository.findById(id).orElse(null);
@@ -44,6 +48,12 @@ public class AdminController {
             applicant.assignTo(professor);
             applicant.setStatus(ApplicationStatus.SENT_TO_PROFESSORS);
             applicantRepository.save(applicant);
+            try {
+                mailSenderService.sendNotificationOfAssignment(professor);
+            } catch (Exception e) {
+                // routing still counts if the email fails, e.g. no smtp server running locally
+                System.out.println("could not email " + professor.getEmail() + ": " + e.getMessage());
+            }
         }
         return "redirect:/admin";
     }
