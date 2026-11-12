@@ -139,5 +139,13 @@ class ApplicantReviewServiceTest {
         Mockito.verify(applicants, never()).save(applicant);
     }
 
+    @Test
+    void nonVerdictStatusIsIgnored() {
+
+        service.assignVerdict(professor.getId(), 1L, ApplicationStatus.DECIDED);
+
+        Mockito.verify(applicants, never()).save(applicant);
+        Mockito.verify(applicant, never()).assignTo(null);
+    }
 
 }
