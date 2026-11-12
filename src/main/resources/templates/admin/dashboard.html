@@ -40,10 +40,10 @@
             <td th:text="${#strings.listJoin(app.preferredProfessors.![name], ', ')}">Prof. Smith, Prof. Lee</td>
             <td th:text="${app.status}">SUBMITTED</td>
             <td>
-                <!-- show the assigned prof, or a form to route the application to one if it hasn't been sent yet -->
+                <!-- show the assigned prof, and a form to route the application if it hasn't been sent yet -->
                 <span th:if="${app.assignedProfessor != null}"
                       th:text="${app.assignedProfessor.name}">Prof. Smith</span>
-                <form th:if="${app.assignedProfessor == null and app.status.name() == 'SUBMITTED'}" class="inline-form" method="post"
+                <form th:if="${app.status.name() == 'SUBMITTED'}" class="inline-form" method="post"
                       th:action="@{/admin/applications/{id}/route(id=${app.id})}">
                     <select name="professorId">
                         <option th:each="prof : ${professors}"

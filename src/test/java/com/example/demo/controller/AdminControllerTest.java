@@ -5,6 +5,7 @@ import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.ProfessorRepository;
+import com.example.demo.services.MailSenderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ class AdminControllerTest {
 
     @MockBean
     ProfessorRepository professorRepository;
+
+    @MockBean
+    MailSenderService mailSenderService;
 
     Professor professor;
 
@@ -93,5 +97,6 @@ class AdminControllerTest {
         assertEquals(professor, john.getAssignedProfessor());
         assertEquals(ApplicationStatus.SENT_TO_PROFESSORS, john.getStatus());
         verify(applicantRepository).save(john);
+        verify(mailSenderService).sendNotificationOfAssignment(professor);
     }
 }
