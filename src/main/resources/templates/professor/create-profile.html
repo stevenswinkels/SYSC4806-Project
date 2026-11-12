@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Professor Profile</title>
+</head>
+<body>
+    <h2>Create Professor Profile</h2>
+
+    <form th:action="@{/professor/create}" th:object="${professor}" method="post">
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}" required />
+        </div>
+
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" th:field="*{email}" required />
+        </div>
+
+        <div>
+            <label for="researchFields">Research Fields / Interests:</label><br/>
+            <textarea id="researchFields" th:field="*{researchFields}" rows="5" cols="40" 
+                      placeholder="e.g., Distributed Systems, Machine Learning, Network Security"></textarea>
+        </div>
+
+        <br/>
+        <button type="submit">Create Profile</button>
+    </form>
+</body>
+</html>

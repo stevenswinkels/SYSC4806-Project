@@ -3,6 +3,9 @@ package com.example.demo.dto;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.Professor;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,12 +16,27 @@ public class ProfDTO {
     private Long  id;
     private Professor professor;
     private Set<String> researchFields;
+
+    // Required default constructor for Spring MVC    
+    public ProfDTO() {}
+
+    public ProfDTO(Long id, String name, String email, String researchFields) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        setResearchFields(researchFields == null || researchFields.isBlank()
+                ? Set.of()
+                : new LinkedHashSet<>(Arrays.asList(researchFields.split("\\s*,\\s*"))));
+    }
+
     public ProfDTO(Professor prof) {
-        this.applicants = prof.getAssignedApplicants();
-        this.name = prof.getName();
-        this.email = prof.getEmail();
-        this.id = prof.getId();
-        this.researchFields = prof.getResearchFields();
+        if (prof != null) {
+            this.id = prof.getId();
+            this.name = prof.getName();
+            this.email = prof.getEmail();
+            this.applicants = prof.getAssignedApplicants();
+            this.researchFields = prof.getResearchFields() != null ? new HashSet<>(prof.getResearchFields()) : new HashSet<>();
+        }
     }
 
     public List<Applicant> getApplicants() {

@@ -21,11 +21,6 @@ public class ApplicantController {
         this.service = service;
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/apply";
-    }
-
     @GetMapping("/apply")
     public String showForm(Model model) {
         model.addAttribute("form", new ApplicantForm());

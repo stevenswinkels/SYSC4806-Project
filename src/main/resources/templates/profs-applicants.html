@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Evaluate Applicants</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Evaluate Applicants')}"></head>
 <body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
 <div>
     <p th:text="|Hello ${prof.getName()}!|"></p>
     <p th:text="|You have ${prof.getApplicants().size()} applications to review|"></p>
@@ -23,5 +23,8 @@
         </tbody>
     </table>
 </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
