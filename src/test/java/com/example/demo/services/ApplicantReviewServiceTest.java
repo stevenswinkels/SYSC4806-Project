@@ -3,9 +3,11 @@ package com.example.demo.services;
 import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.ApplicationStatus;
+import com.example.demo.model.Evaluation;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.ProfessorRepository;
+import com.example.demo.repository.EvaluationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +34,8 @@ class ApplicantReviewServiceTest {
     ApplicantRepository applicants;
     @Mock
     ProfessorRepository professors;
+    @Mock
+    EvaluationRepository evaluations;
 
     @InjectMocks
     ApplicantReviewService service;
@@ -100,6 +104,7 @@ class ApplicantReviewServiceTest {
         service.assignVerdict(professor.getId(), 1L, status);
         Mockito.verify(applicant).assignTo(null);
         Mockito.verify(applicants).save(applicant);
+        Mockito.verify(evaluations).save(any(Evaluation.class));
     }
 
     @ParameterizedTest
@@ -112,6 +117,7 @@ class ApplicantReviewServiceTest {
         assertFalse(professor.getAssignedApplicants().isEmpty());
         Mockito.verify(professors, never()).save(professor);
         Mockito.verify(applicants, never()).save(applicant);
+        Mockito.verify(evaluations, never()).save(any());
     }
 
     @ParameterizedTest
@@ -124,6 +130,7 @@ class ApplicantReviewServiceTest {
         assertFalse(professor.getAssignedApplicants().isEmpty());
         Mockito.verify(professors, never()).save(professor);
         Mockito.verify(applicants, never()).save(applicant);
+        Mockito.verify(evaluations, never()).save(any());
     }
 
 
@@ -137,6 +144,7 @@ class ApplicantReviewServiceTest {
         assertFalse(professor.getAssignedApplicants().isEmpty());
         Mockito.verify(professors, never()).save(professor);
         Mockito.verify(applicants, never()).save(applicant);
+        Mockito.verify(evaluations, never()).save(any());
     }
 
     @Test
