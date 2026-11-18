@@ -36,6 +36,8 @@ class ApplicantReviewServiceTest {
     ProfessorRepository professors;
     @Mock
     EvaluationRepository evaluations;
+    @Mock
+    DeadlineService deadlines;
 
     @InjectMocks
     ApplicantReviewService service;
@@ -72,6 +74,7 @@ class ApplicantReviewServiceTest {
         when(professors.findById(professor.getId())).thenReturn(Optional.of(professor));
         doReturn(Optional.empty()).when(professors).findById(2L);
 
+        when(deadlines.isEvaluationOpen(any())).thenReturn(true);
     }
 
 
@@ -154,6 +157,16 @@ class ApplicantReviewServiceTest {
 
         Mockito.verify(applicants, never()).save(applicant);
         Mockito.verify(applicant, never()).assignTo(null);
+        Mockito.verify(evaluations, never()).save(any());
+    }
+
+    @Test
+    void verdictAfterDeadlineIsRejected() {
+        when(deadlines.isEvaluationOpen(any())).thenReturn(false);
+
+        assertThrows(DeadlinePassedException.class,
+                () -> service.assignVerdict(professor.getId(), 1L, ApplicationStatus.DONT_RECOMMEND));
+        Mockito.verify(applicants, never()).save(applicant);
         Mockito.verify(evaluations, never()).save(any());
     }
 
