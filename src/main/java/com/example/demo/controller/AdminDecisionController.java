@@ -24,6 +24,7 @@ public class AdminDecisionController {
     String detail(@PathVariable("appId") Long appId, Model model) {
         try {
             model.addAttribute("applicant", service.getApplicant(appId));
+            model.addAttribute("evaluations", service.getEvaluations(appId));
             model.addAttribute("decisions", FinalDecision.values());
             return "admin/application";
         } catch (NotFoundException e) {
