@@ -30,6 +30,9 @@ public class ApplicantService {
         return professors.findAll();
     }
 
+    public LocalDateTime getApplicationDeadline() {
+        return deadlines.getApplicationDeadline();
+    }
     public Optional<Applicant> getApplicant(Long id) {
         return applicants.findById(id);
     }
