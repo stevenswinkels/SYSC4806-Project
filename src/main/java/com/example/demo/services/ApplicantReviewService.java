@@ -4,13 +4,16 @@ import com.example.demo.dto.ApplicantDTO;
 import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.ApplicationStatus;
+import com.example.demo.model.Evaluation;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ApplicantRepository;
+import com.example.demo.repository.EvaluationRepository;
 import com.example.demo.repository.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumSet;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,6 +30,9 @@ public class ApplicantReviewService {
 
     @Autowired
     private ProfessorRepository professorRepository;
+
+    @Autowired
+    private EvaluationRepository evaluationRepository;
 
     public ProfDTO getProf(Long id) throws NotFoundException {
         Optional<Professor> prof = professorRepository.findById(id);
@@ -69,6 +75,7 @@ public class ApplicantReviewService {
             Applicant applicant = applicantOpt.get();
 
             if(verdicts.contains(verdict) && applicant.getAssignedProfessor().getId().equals(profID)) {
+                evaluationRepository.save(new Evaluation(applicant, applicant.getAssignedProfessor(), verdict, LocalDateTime.now()));
                 applicant.setStatus(verdict);
                 applicantRepository.save(applicant);
                 // remove assignment

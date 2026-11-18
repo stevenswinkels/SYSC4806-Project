@@ -12,7 +12,16 @@
     <tr><th>Final decision</th>
         <td id="finalDecision" th:text="${applicant.finalDecision != null} ? ${applicant.finalDecision} : 'PENDING'"></td></tr>
 </table>
-
+<h2>Professor evaluations</h2>
+<p th:if="${evaluations.isEmpty()}">No evaluations yet.</p>
+<table th:if="${!evaluations.isEmpty()}">
+    <tr><th>Professor</th><th>Assessment</th><th>Submitted at</th></tr>
+    <tr th:each="e : ${evaluations}">
+        <td th:text="${e.professor.name}"></td>
+        <td th:text="${e.assessment}"></td>
+        <td th:text="${e.submittedAt}"></td>
+    </tr>
+</table>
 <form th:action="@{/admin/applications/{id}/decision(id=${applicant.id})}" method="post">
     <label for="decision">Final decision</label>
     <select name="decision" id="decision">

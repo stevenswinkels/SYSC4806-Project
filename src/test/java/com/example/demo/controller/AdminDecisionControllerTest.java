@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.FinalDecision;
+import com.example.demo.model.Evaluation;
+import com.example.demo.model.Professor;
 import com.example.demo.services.AdminDecisionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.HashSet;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.verify;
@@ -61,6 +64,18 @@ class AdminDecisionControllerTest {
                 .andExpect(view().name("admin/application"))
                 .andExpect(model().attributeExists("applicant"))
                 .andExpect(content().string(containsString("John Doe")));
+    }
+
+    @Test
+    void detailPageShowsProfessorEvaluations() throws Exception {
+        Professor prof = new Professor("Dr. Euler", "euler@example.com", new HashSet<>());
+        Evaluation evaluation = new Evaluation(applicant, prof, ApplicationStatus.RECOMMEND_NO_FUNDING, LocalDateTime.now());
+        when(service.getEvaluations(1L)).thenReturn(List.of(evaluation));
+
+        mvc.perform(get("/admin/applications/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Dr. Euler")))
+                .andExpect(content().string(containsString("RECOMMEND_NO_FUNDING")));
     }
 
     @Test
