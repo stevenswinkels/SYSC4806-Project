@@ -154,6 +154,7 @@ class ApplicantReviewServiceTest {
 
         Mockito.verify(applicants, never()).save(applicant);
         Mockito.verify(applicant, never()).assignTo(null);
+        Mockito.verify(evaluations, never()).save(any());
     }
 
 }
