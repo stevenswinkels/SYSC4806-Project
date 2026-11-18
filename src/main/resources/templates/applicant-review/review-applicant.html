@@ -30,6 +30,7 @@
 </div>
 <div>
     <!-- provide a form for the decision the prof can take on the application -->
+    <p th:if="${deadline != null}" th:text="|Evaluations close ${#temporals.format(deadline, 'MMMM d, yyyy h:mm a')}|"></p>
     <form th:action="@{/evaluations/__${prof.getId()}__/__${applicant.getId()}__}" method="post">
         <label for="decision">Decision</label>
         <select name="decision" id="decision">

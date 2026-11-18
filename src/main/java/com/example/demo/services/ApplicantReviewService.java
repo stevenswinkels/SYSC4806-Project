@@ -62,6 +62,10 @@ public class ApplicantReviewService {
 
     }
 
+    public LocalDateTime getEvaluationDeadline() {
+        return deadlineService.getEvaluationDeadline();
+    }
+
     public static Set<ApplicationStatus> getVerdicts() {
         return EnumSet.copyOf(verdicts);
     }
