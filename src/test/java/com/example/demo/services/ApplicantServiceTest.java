@@ -6,6 +6,7 @@ import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.ProfessorRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +27,13 @@ class ApplicantServiceTest {
 
     @Mock ApplicantRepository applicants;
     @Mock ProfessorRepository professors;
+    @Mock DeadlineService deadlines;
     @InjectMocks ApplicantService service;
+
+    @BeforeEach
+    void setUp() {
+        when(deadlines.isApplicationOpen(any())).thenReturn(true);
+    }
 
     private ApplicantForm bhagyaForm() {
         ApplicantForm f = new ApplicantForm();
@@ -71,6 +78,15 @@ class ApplicantServiceTest {
                 .thenReturn(Optional.of(new Applicant()));
 
         assertThrows(DuplicateApplicationException.class,
+                () -> service.submit(bhagyaForm()));
+        verify(applicants, never()).save(any());
+    }
+
+    @Test
+    void submitAfterDeadlineIsRejectedAndNothingIsSaved() {
+        when(deadlines.isApplicationOpen(any())).thenReturn(false);
+
+        assertThrows(DeadlinePassedException.class,
                 () -> service.submit(bhagyaForm()));
         verify(applicants, never()).save(any());
     }
