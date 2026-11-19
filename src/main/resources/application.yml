@@ -11,6 +11,9 @@ spring:
       auth: ${spring_mail_enable_tls:false}
       starttls.enable: ${spring_mail_enable_tls:false}
       ssl.trust: ${spring_mail_host:localhost}
+logging:
+    level:
+      root: ${spring_logging_level_root:INFO}
 custom:
   mail:
     from: ${custom_mail_address:noreply@example.com}
