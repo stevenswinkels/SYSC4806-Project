@@ -12,5 +12,8 @@ spring:
       starttls.enable: ${spring_mail_enable_tls:false}
       ssl.trust: ${spring_mail_host:localhost}
 custom:
+  deadlines:
+    application: ${custom_application_deadline:2026-12-31T23:59}
+    evaluation: ${custom_evaluation_deadline:2027-01-31T23:59}
   mail:
     from: ${custom_mail_address:noreply@example.com}

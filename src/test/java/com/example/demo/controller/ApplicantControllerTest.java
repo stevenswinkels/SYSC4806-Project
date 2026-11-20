@@ -4,6 +4,7 @@ import com.example.demo.dto.ApplicantForm;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.Professor;
 import com.example.demo.services.ApplicantService;
+import com.example.demo.services.DeadlinePassedException;
 import com.example.demo.services.DuplicateApplicationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,14 @@ class ApplicantControllerTest {
                 new HashSet<>(Set.of("Abstract Algebra")));
         ReflectionTestUtils.setField(noether, "id", 1L);
         when(service.getAllProfessors()).thenReturn(List.of(noether));
+        when(service.getApplicationDeadline()).thenReturn(LocalDateTime.of(2026, 12, 1, 17, 0));
 
         mvc.perform(get("/apply"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("apply"))
                 .andExpect(model().attributeExists("form", "professors"))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Dr. Emmy Noether")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Dr. Emmy Noether")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Applications close December 1, 2026 5:00 PM")));
     }
 
     @Test
@@ -82,6 +85,20 @@ class ApplicantControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("apply"))
                 .andExpect(model().attributeHasFieldErrors("form", "email"));
+    }
+
+    @Test
+    void lateApplicationShowsDeadlineMessage() throws Exception {
+        when(service.submit(any(ApplicantForm.class)))
+                .thenThrow(new DeadlinePassedException("The application deadline has passed"));
+
+        mvc.perform(post("/apply")
+                        .param("fullName", "Bhagya")
+                        .param("email", "bhagya@example.com")
+                        .param("desiredResearchField", "Robotics"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("apply"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("The application deadline has passed")));
     }
 
     @Test

@@ -6,6 +6,8 @@
 
 <main class="container">
 <h1>Graduate Application</h1>
+    <p th:if="${deadline != null}" th:text="|Applications close ${#temporals.format(deadline, 'MMMM d, yyyy h:mm a')}|"></p>
+    <p th:if="${error}" th:text="${error}"></p>
 
 <form th:action="@{/apply}" th:object="${form}" method="post">
     <p>
