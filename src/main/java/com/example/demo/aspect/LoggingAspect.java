@@ -41,13 +41,14 @@ public class LoggingAspect {
     @Pointcut("execution(public * *(..))")
     public void publicMethods() {}
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)||" +
-            "    @annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
     public void getMappingMethods() {}
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping) ||" +
-            "   @annotation(org.springframework.web.bind.annotation.PostMapping)")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping)")
     public void postMappingMethods() {}
+
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    public void requestMappingMethods() {}
 
 
     @Before("inServiceLayer() && publicMethods()")
@@ -56,22 +57,24 @@ public class LoggingAspect {
         log.debug("Service called: " + type + "." + joinPoint.getSignature().getName());
     }
 
-    @Around("postMappingMethods() || getMappingMethods()")
-    public void logOperationDuration(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("postMappingMethods() || getMappingMethods() || requestMappingMethods()")
+    public Object logOperationDuration(ProceedingJoinPoint joinPoint) throws Throwable {
             long start = System.currentTimeMillis();
             // get request url
             String url = "Could not get URL";
+            Object ret = null;
             try{
                 url = getRequest().getRequestURL().toString();
             }catch(Exception e){}
             // process request
             try {
-            joinPoint.proceed();
+            ret = joinPoint.proceed();
             }catch (Throwable e){
                 log.error("Exception occurred while processing " + url +": ", e);
                 throw e;
             }
             long end = System.currentTimeMillis();
             log.info(url + " took " +  (end - start) + " ms");
+            return ret;
     }
 }

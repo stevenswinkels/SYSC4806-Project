@@ -106,5 +106,13 @@ class LoggingAspectTest {
 
         verify(joinPoint, times(1)).proceed();
     }
+
+
+    @Test
+    void shouldReturnResultOfJoinPointProceed() throws Throwable {
+        Object ret = "return object";
+        when(joinPoint.proceed()).thenReturn(ret);
+        assertSame(ret, aspect.logOperationDuration(joinPoint));
+    }
 }
 
