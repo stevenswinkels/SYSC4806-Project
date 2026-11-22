@@ -16,8 +16,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.core.annotation.Order;
 
 @Component
+@Order(1)
 @Transactional
 public class DataSeeder implements CommandLineRunner {
     private final ProfessorRepository professors;
