@@ -8,6 +8,7 @@ import com.example.demo.repository.ApplicantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.demo.model.ApplicationStatus;
 
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class AdminDecisionService {
     public void recordFinalDecision(Long appId, FinalDecision decision) throws NotFoundException {
         Applicant applicant = getApplicant(appId);
         applicant.setFinalDecision(decision);
+        applicant.setStatus(ApplicationStatus.DECIDED);
         applicantRepository.save(applicant);
     }
 }
