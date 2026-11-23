@@ -88,4 +88,19 @@ class AdminDecisionControllerTest {
 
         verify(service).recordFinalDecision(1L, FinalDecision.ADMIT);
     }
+
+    @Test
+    void decidedApplicationShowsRecommendationAndFinalDecision() throws Exception {
+        applicant.setStatus(ApplicationStatus.DECIDED);
+        applicant.setFinalDecision(FinalDecision.ADMIT);
+        Professor prof = new Professor("Dr. Euler", "euler@example.com", new HashSet<>());
+        Evaluation evaluation = new Evaluation(applicant, prof,
+                ApplicationStatus.RECOMMEND_WITH_FUNDING, LocalDateTime.now());
+        when(service.getEvaluations(1L)).thenReturn(List.of(evaluation));
+
+        mvc.perform(get("/admin/applications/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("<td id=\"recommendation\">RECOMMEND_WITH_FUNDING</td>")))
+                .andExpect(content().string(containsString("<td id=\"finalDecision\">ADMIT</td>")));
+    }
 }
