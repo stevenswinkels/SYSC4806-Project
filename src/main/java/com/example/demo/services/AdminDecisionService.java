@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.model.ApplicationStatus;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -22,7 +24,9 @@ public class AdminDecisionService {
     private EvaluationRepository evaluationRepository;
 
     public List<Applicant> getApplicantsWithRecommendations() {
-        return applicantRepository.findByStatusIn(ApplicantReviewService.getVerdicts());
+        Set<ApplicationStatus> statuses = EnumSet.copyOf(ApplicantReviewService.getVerdicts());
+        statuses.add(ApplicationStatus.DECIDED);
+        return applicantRepository.findByStatusIn(statuses);
     }
 
     public Applicant getApplicant(Long appId) throws NotFoundException {
