@@ -21,9 +21,9 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -100,5 +100,20 @@ class AdminControllerTest {
         assertEquals(ApplicationStatus.SENT_TO_PROFESSORS, john.getStatus());
         verify(applicantRepository).save(john);
         verify(mailSenderService).sendNotificationOfAssignment(professor);
+    }
+
+    @Test
+    void routeIgnoresDecidedApplication() throws Exception {
+        john.setStatus(ApplicationStatus.DECIDED);
+        when(applicantRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(professorRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(professor));
+
+        mvc.perform(post("/admin/applications/1/route").param("professorId", "1"))
+                .andExpect(redirectedUrl("/admin"));
+
+        assertEquals(ApplicationStatus.DECIDED, john.getStatus());
+        assertNull(john.getAssignedProfessor());
+        verify(applicantRepository, never()).save(john);
+        verify(mailSenderService, never()).sendNotificationOfAssignment(professor);
     }
 }
