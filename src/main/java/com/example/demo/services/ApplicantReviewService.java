@@ -34,6 +34,9 @@ public class ApplicantReviewService {
     @Autowired
     private EvaluationRepository evaluationRepository;
 
+    @Autowired
+    private DeadlineService deadlineService;
+
     public ProfDTO getProf(Long id) throws NotFoundException {
         Optional<Professor> prof = professorRepository.findById(id);
         if (!prof.isPresent()) {
@@ -59,6 +62,10 @@ public class ApplicantReviewService {
 
     }
 
+    public LocalDateTime getEvaluationDeadline() {
+        return deadlineService.getEvaluationDeadline();
+    }
+
     public static Set<ApplicationStatus> getVerdicts() {
         return EnumSet.copyOf(verdicts);
     }
@@ -70,6 +77,9 @@ public class ApplicantReviewService {
      * @param verdict the verdict being assigned
      */
     public void assignVerdict(Long profID, Long  applicantID, ApplicationStatus verdict){
+        if (!deadlineService.isEvaluationOpen(LocalDateTime.now())) {
+            throw new DeadlinePassedException("The evaluation deadline has passed");
+        }
         Optional<Applicant> applicantOpt = applicantRepository.findById(applicantID);
         if(applicantOpt.isPresent() && applicantOpt.get().getAssignedProfessor() != null){
             Applicant applicant = applicantOpt.get();

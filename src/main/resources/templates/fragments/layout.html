@@ -23,6 +23,8 @@
             <form th:if="${signedIn}" th:action="@{/logout}" method="post" style="display:inline; margin:0;">
                 <button type="submit">Sign out</button>
             </form>
+            <a href="/admin" th:href="@{/admin}">Admin</a>
+            <a href="/admin/applications" th:href="@{/admin/applications}">Decisions</a>
         </nav>
     </div>
 </header>

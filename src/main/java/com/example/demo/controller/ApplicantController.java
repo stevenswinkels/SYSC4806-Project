@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ApplicantForm;
 import com.example.demo.model.Applicant;
+import com.example.demo.services.DeadlinePassedException;
 import com.example.demo.services.ApplicantService;
 import com.example.demo.services.DuplicateApplicationException;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ public class ApplicantController {
     public String showForm(Model model) {
         model.addAttribute("form", new ApplicantForm());
         model.addAttribute("professors", service.getAllProfessors());
+        model.addAttribute("deadline", service.getApplicationDeadline());
         return "apply";
     }
 
@@ -38,9 +40,12 @@ public class ApplicantController {
             } catch (DuplicateApplicationException e) {
                 result.rejectValue("email", "duplicate",
                         "An application with this email already exists");
+            } catch (DeadlinePassedException e) {
+                model.addAttribute("error", e.getMessage());
             }
         }
         model.addAttribute("professors", service.getAllProfessors());
+        model.addAttribute("deadline", service.getApplicationDeadline());
         return "apply";
     }
 

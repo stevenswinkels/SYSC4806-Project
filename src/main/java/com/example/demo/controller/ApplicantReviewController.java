@@ -6,6 +6,7 @@ import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.services.MailSenderService;
 import com.example.demo.services.ApplicantReviewService;
+import com.example.demo.services.DeadlinePassedException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Transactional
@@ -55,6 +57,7 @@ public class ApplicantReviewController {
                     model.addAttribute("prof", prof);
                     model.addAttribute("applicant", applicant);
                     model.addAttribute("decisions", ApplicantReviewService.getVerdicts());
+                    model.addAttribute("deadline", applicantReviewService.getEvaluationDeadline());
                     return "applicant-review/review-applicant";
                 }
         }catch (Exception e) {
@@ -76,12 +79,15 @@ public class ApplicantReviewController {
     @PostMapping("evaluations/{profID}/{applicantID}")
     String postEvaluateApplications(@PathVariable("profID") Long profID,
                                     @PathVariable("applicantID") Long applicantID,
-                                    @RequestParam(name = "decision", required = true) String decision){
+                                    @RequestParam(name = "decision", required = true) String decision,
+                                    RedirectAttributes redirectAttributes){
         try {
             ApplicationStatus verdict = ApplicationStatus.valueOf(decision);
             applicantReviewService.assignVerdict(profID, applicantID, verdict);
         }catch (IllegalArgumentException e){
             System.out.println(e.getMessage());
+        }catch (DeadlinePassedException e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
 
