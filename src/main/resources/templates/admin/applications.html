@@ -11,7 +11,7 @@
     <div class="table-wrap" th:if="${!applicants.isEmpty()}">
         <table>
             <thead>
-            <tr><th>Applicant</th><th>Research field</th><th>Professor recommendation</th><th>Final decision</th><th></th></tr>
+            <tr><th>Applicant</th><th>Research field</th><th>Status</th><th>Final decision</th><th></th></tr>
             </thead>
             <tbody>
             <tr th:each="app : ${applicants}">
