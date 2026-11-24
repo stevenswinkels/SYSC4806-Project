@@ -44,7 +44,7 @@ public class AdminController {
     String route(@PathVariable("id") Long id, @RequestParam("professorId") Long professorId) {
         Applicant applicant = applicantRepository.findById(id).orElse(null);
         Professor professor = professorRepository.findById(professorId).orElse(null);
-        if (applicant != null && professor != null) {
+        if (applicant != null && professor != null && applicant.getStatus() != ApplicationStatus.DECIDED) {
             applicant.assignTo(professor);
             applicant.setStatus(ApplicationStatus.SENT_TO_PROFESSORS);
             applicantRepository.save(applicant);
