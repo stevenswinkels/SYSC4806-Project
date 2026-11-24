@@ -1,9 +1,11 @@
 package com.example.demo.dto;
 
 import com.example.demo.model.Applicant;
+import com.example.demo.model.ApplicantFile;
 import com.example.demo.model.Professor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ApplicantDTO {
     private Long id;
@@ -12,6 +14,8 @@ public class ApplicantDTO {
     private LocalDateTime submittedAt;
     private Professor AssignedProf;
     private String desiredResearchField;
+    private List<ApplicantFile> applicantFiles;
+
     public ApplicantDTO(Applicant applicant) {
         this.id = applicant.getId();
         this.FullName = applicant.getFullName();
@@ -19,6 +23,19 @@ public class ApplicantDTO {
         this.submittedAt = applicant.getSubmittedAt();
         this.desiredResearchField = applicant.getDesiredResearchField();
         this.AssignedProf = applicant.getAssignedProfessor();
+        this.applicantFiles = applicant.getApplicantFiles();
+    }
+
+    public List<ApplicantFile> getApplicantFiles() {
+        return applicantFiles;
+    }
+
+    public void setApplicantFile(List<ApplicantFile> applicantFiles) {
+        this.applicantFiles = applicantFiles;
+    }
+
+    public void addApplicantFile(ApplicantFile applicantFile) {
+        this.applicantFiles.add(applicantFile);
     }
 
     public String getDesiredResearchField() {
