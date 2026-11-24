@@ -15,5 +15,8 @@ logging:
     level:
       root: ${spring_logging_level_root:INFO}
 custom:
+  deadlines:
+    application: ${custom_application_deadline:2026-12-31T23:59}
+    evaluation: ${custom_evaluation_deadline:2027-01-31T23:59}
   mail:
     from: ${custom_mail_address:noreply@example.com}

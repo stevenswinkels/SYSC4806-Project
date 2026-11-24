@@ -6,6 +6,7 @@
 
 <main class="container">
 <div>
+    <p th:if="${error}" th:text="${error}"></p>
     <p th:text="|Hello ${prof.getName()}!|"></p>
     <p th:text="|You have ${prof.getApplicants().size()} applications to review|"></p>
 </div>

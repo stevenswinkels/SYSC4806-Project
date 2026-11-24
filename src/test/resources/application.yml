@@ -7,5 +7,8 @@ spring:
     protocol: smtp
     test-connection: false
 custom:
+  deadlines:
+    application: 2026-12-31T23:59
+    evaluation: 2027-01-31T23:59
   mail:
     from: test@example.org

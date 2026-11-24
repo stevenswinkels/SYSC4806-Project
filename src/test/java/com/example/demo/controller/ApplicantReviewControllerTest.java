@@ -6,6 +6,7 @@ import com.example.demo.model.Applicant;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import com.example.demo.services.ApplicantReviewService;
+import com.example.demo.services.DeadlinePassedException;
 
 import com.example.demo.services.NotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,8 +30,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 @WebMvcTest(ApplicantReviewController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ApplicantReviewControllerTest {
 
     @Autowired
@@ -63,6 +66,8 @@ class ApplicantReviewControllerTest {
         when(service.getApplicantAssignedToProf(1L, 1L)).thenReturn(new ApplicantDTO(applicant));
         when(service.getApplicantAssignedToProf(2L, 1L)).thenThrow(new NotFoundException("applicant not found"));
         when(service.getApplicantAssignedToProf(1L, 2L)).thenThrow(new NotFoundException("prof not found"));
+
+        when(service.getEvaluationDeadline()).thenReturn(LocalDateTime.of(2026, 12, 1, 17, 0));
     }
 
     @Test
@@ -94,7 +99,8 @@ class ApplicantReviewControllerTest {
                 .andExpect(model().attributeExists("applicant"))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("John Doe")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("student@example.org")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("research field")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("research field")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Evaluations close December 1, 2026 5:00 PM")));
     }
 
     @Test
@@ -121,5 +127,15 @@ class ApplicantReviewControllerTest {
                 .andExpect(status().is3xxRedirection());
 
         org.mockito.Mockito.verify(service).assignVerdict(1L, 1L, ApplicationStatus.DONT_RECOMMEND);
+    }
+
+    @Test
+    void lateReviewShowsDeadlineMessage() throws Exception {
+        org.mockito.Mockito.doThrow(new DeadlinePassedException("The evaluation deadline has passed"))
+                .when(service).assignVerdict(1L, 1L, ApplicationStatus.DONT_RECOMMEND);
+
+        mvc.perform(post("/evaluations/1/1").param("decision", "DONT_RECOMMEND"))
+                .andExpect(redirectedUrl("/evaluations/1"))
+                .andExpect(flash().attribute("error", "The evaluation deadline has passed"));
     }
 }
