@@ -120,10 +120,7 @@ public class ApplicantReviewController {
                     .body(pdf);
             return response;
         } catch (NotFoundException e) {
-            String uri = "redirect:/evaluations/" + Long.toString(profId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .location(URI.create(uri))
-                    .build();
+            return ResponseEntity.notFound().build();
         }
 
     }
