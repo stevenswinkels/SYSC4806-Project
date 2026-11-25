@@ -4,19 +4,22 @@ import com.example.demo.dto.ApplicantForm;
 import com.example.demo.model.Applicant;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
+import com.example.demo.repository.ApplicantFileRepository;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.ProfessorRepository;
+import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +31,8 @@ class ApplicantServiceTest {
     @Mock ApplicantRepository applicants;
     @Mock ProfessorRepository professors;
     @Mock DeadlineService deadlines;
+    @Mock
+    ApplicantFileRepository applicantFiles;
     @InjectMocks ApplicantService service;
 
     @BeforeEach
@@ -40,11 +45,18 @@ class ApplicantServiceTest {
         f.setFullName("Bhagya");
         f.setEmail("bhagya@example.com");
         f.setDesiredResearchField("Robotics");
+        MockMultipartFile file = new MockMultipartFile(
+                "files",
+                "cover-letter.pdf",
+                MediaType.APPLICATION_PDF_VALUE,
+                "Cover letter content".getBytes()
+        );
+        f.setFiles(List.of(file));
         return f;
     }
 
     @Test
-    void submitSavesWithSubmittedStatusTimestampAndProfessors() {
+    void submitSavesWithSubmittedStatusTimestampAndProfessors() throws InvalidContentTypeException {
         Professor turing = new Professor("Dr. Alan Turing", "turing@example.com",
                 new HashSet<>(Set.of("Computability")));
         ApplicantForm form = bhagyaForm();
@@ -62,7 +74,7 @@ class ApplicantServiceTest {
     }
 
     @Test
-    void submitWithoutProfessorsStillSaves() {
+    void submitWithoutProfessorsStillSaves() throws InvalidContentTypeException {
         when(applicants.findByEmail("bhagya@example.com")).thenReturn(Optional.empty());
         when(applicants.save(any(Applicant.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -89,5 +101,19 @@ class ApplicantServiceTest {
         assertThrows(DeadlinePassedException.class,
                 () -> service.submit(bhagyaForm()));
         verify(applicants, never()).save(any());
+    }
+
+    @Test
+    void rejectNonPdfFile() {
+        ApplicantForm form = bhagyaForm();
+        MockMultipartFile file = new MockMultipartFile(
+                "files",
+                "cover-letter.pdf",
+                MediaType.ALL_VALUE,
+                "Cover letter content".getBytes()
+        );
+        List<MultipartFile> files = List.of(file);
+        form.setFiles(files);
+        assertThrows(InvalidContentTypeException.class, () -> service.submit(form));
     }
 }

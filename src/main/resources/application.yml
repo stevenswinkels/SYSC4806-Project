@@ -11,6 +11,9 @@ spring:
       auth: ${spring_mail_enable_tls:false}
       starttls.enable: ${spring_mail_enable_tls:false}
       ssl.trust: ${spring_mail_host:localhost}
+logging:
+    level:
+      root: ${spring_logging_level_root:INFO}
 custom:
   deadlines:
     application: ${custom_application_deadline:2026-12-31T23:59}

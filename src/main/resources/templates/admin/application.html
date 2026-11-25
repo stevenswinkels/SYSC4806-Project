@@ -14,7 +14,7 @@
             <tr><th>Email</th><td th:text="${applicant.email}" id="email"></td></tr>
             <tr><th>Desired research field</th><td th:text="${applicant.desiredResearchField}" id="researchField"></td></tr>
             <tr><th>Submitted at</th><td th:text="${applicant.submittedAt}" id="submittedAt"></td></tr>
-            <tr><th>Professor recommendation</th><td th:text="${applicant.status}" id="recommendation"></td></tr>
+            <tr><th>Professor recommendation</th><td th:text="${evaluations.isEmpty() ? 'None yet' : evaluations[0].assessment}" id="recommendation"></td></tr>
             <tr><th>Final decision</th>
                 <td id="finalDecision" th:text="${applicant.finalDecision != null} ? ${applicant.finalDecision} : 'PENDING'"></td></tr>
         </table>

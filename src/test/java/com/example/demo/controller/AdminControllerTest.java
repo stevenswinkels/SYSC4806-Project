@@ -21,9 +21,9 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -100,5 +100,74 @@ class AdminControllerTest {
         assertEquals(ApplicationStatus.SENT_TO_PROFESSORS, john.getStatus());
         verify(applicantRepository).save(john);
         verify(mailSenderService).sendNotificationOfAssignment(professor);
+    }
+
+    @Test
+    void routeIgnoresDecidedApplication() throws Exception {
+        john.setStatus(ApplicationStatus.DECIDED);
+        when(applicantRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(professorRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(professor));
+
+        mvc.perform(post("/admin/applications/1/route").param("professorId", "1"))
+                .andExpect(redirectedUrl("/admin"));
+
+        assertEquals(ApplicationStatus.DECIDED, john.getStatus());
+        assertNull(john.getAssignedProfessor());
+        verify(applicantRepository, never()).save(john);
+        verify(mailSenderService, never()).sendNotificationOfAssignment(professor);
+    }
+
+    @Test
+    void dashboardFiltersByPreferredProfessor() throws Exception {
+        john.setPreferredProfessors(List.of(professor));
+
+        mvc.perform(get("/admin").param("preferred", "1")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("John Doe")))
+                .andExpect(content().string(not(containsString("Jane Roe"))));
+    }
+
+    @Test
+    void dashboardFiltersByStatus() throws Exception {
+        jane.setStatus(ApplicationStatus.DECIDED);
+
+        mvc.perform(get("/admin").param("status", "DECIDED")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Jane Roe")))
+                .andExpect(content().string(not(containsString("John Doe"))));
+    }
+
+    @Test
+    void routeSelectedAssignsProfessorAndNotifiesForEach() throws Exception {
+        when(applicantRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(applicantRepository.findById(2L)).thenReturn(Optional.of(jane));
+        when(professorRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(professor));
+
+        mvc.perform(post("/admin/applications/route")
+                        .param("applicationIds", "1", "2")
+                        .param("professorId", "1"))
+                .andExpect(redirectedUrl("/admin"));
+
+        assertEquals(professor, john.getAssignedProfessor());
+        assertEquals(professor, jane.getAssignedProfessor());
+        assertEquals(ApplicationStatus.SENT_TO_PROFESSORS, john.getStatus());
+        assertEquals(ApplicationStatus.SENT_TO_PROFESSORS, jane.getStatus());
+        verify(mailSenderService, times(2)).sendNotificationOfAssignment(professor);
+    }
+
+    @Test
+    void routeSelectedSkipsDecidedAndUnknownApplications() throws Exception {
+        john.setStatus(ApplicationStatus.DECIDED);
+        when(applicantRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(applicantRepository.findById(99L)).thenReturn(Optional.empty());
+        when(professorRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(professor));
+
+        mvc.perform(post("/admin/applications/route")
+                        .param("applicationIds", "1", "99")
+                        .param("professorId", "1"))
+                .andExpect(redirectedUrl("/admin"));
+
+        assertNull(john.getAssignedProfessor());
+        assertEquals(ApplicationStatus.DECIDED, john.getStatus());
+        verify(applicantRepository, never()).save(any());
+        verify(mailSenderService, never()).sendNotificationOfAssignment(any());
     }
 }

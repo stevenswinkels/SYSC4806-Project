@@ -15,59 +15,65 @@
     <form class="inline-form" method="get" action="/admin" th:action="@{/admin}">
         <input type="text" name="field" placeholder="Filter by research field"
                th:value="${param.field}">
+        <select name="preferred">
+            <option value="">Any preferred professor</option>
+            <option th:each="prof : ${professors}" th:value="${prof.id}" th:text="${prof.name}"
+                    th:selected="${prof.id == selectedPreferred}"></option>
+        </select>
+        <select name="status">
+            <option value="">Any status</option>
+            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+                    th:selected="${s == selectedStatus}"></option>
+        </select>
         <button type="submit">Filter</button>
         <a href="/admin" th:href="@{/admin}">Clear</a>
     </form>
 
     <p th:if="${#lists.isEmpty(applications)}">No applications found.</p>
 
-    <div class="table-wrap" th:unless="${#lists.isEmpty(applications)}">
-    <table>
-        <thead>
-        <tr>
-            <th>Applicant</th>
-            <th>Email</th>
-            <th>Research Field</th>
-            <th>Preferred Professors</th>
-            <th>Status</th>
-            <th>Assigned Professor</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="app : ${applications}">
-            <td th:text="${app.fullName}">Jane Doe</td>
-            <td th:text="${app.email}">jane@example.com</td>
-            <td th:text="${app.desiredResearchField}">Machine Learning</td>
-            <td th:text="${#strings.listJoin(app.preferredProfessors.![name], ', ')}">Prof. Smith, Prof. Lee</td>
-            <td th:text="${app.status}">SUBMITTED</td>
-            <td>
-                <!-- show the assigned prof, and a form to route the application if it hasn't been sent yet -->
-                <span th:if="${app.assignedProfessor != null}"
-                      th:text="${app.assignedProfessor.name}">Prof. Smith</span>
-                <form th:if="${app.status.name() == 'SUBMITTED'}" class="inline-form" method="post"
-                      th:action="@{/admin/applications/{id}/route(id=${app.id})}">
-                    <select name="professorId">
-                        <option th:each="prof : ${professors}"
-                                th:value="${prof.id}"
-                                th:text="${prof.name + ' (' + #strings.setJoin(prof.researchFields, ', ') + ')'}">Prof. Smith (Machine Learning)</option>
-                    </select>
-                    <button type="submit">Route</button>
-                </form>
-            </td>
-        </tr>
-        <!-- sample row, only shows up when opening this file directly -->
-        <tr th:remove="all">
-            <td>John Roe</td>
-            <td>john@example.com</td>
-            <td>Networks</td>
-            <td>Prof. Lee</td>
-            <td>ROUTED</td>
-            <td>Prof. Lee</td>
-        </tr>
-        </tbody>
-    </table>
-    </div>
+    <form method="post" action="/admin/applications/route" th:action="@{/admin/applications/route}"
+          th:unless="${#lists.isEmpty(applications)}">
+        <!-- pick a professor, tick the applications, route them all at once -->
+        <div class="inline-form">
+            <select name="professorId">
+                <option th:each="prof : ${professors}"
+                        th:value="${prof.id}"
+                        th:text="${prof.name + ' (' + #strings.setJoin(prof.researchFields, ', ') + ')'}">Prof. Smith (Machine Learning)</option>
+            </select>
+            <button type="submit">Route selected</button>
+        </div>
 
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Applicant</th>
+                    <th>Email</th>
+                    <th>Research Field</th>
+                    <th>Preferred Professors</th>
+                    <th>Status</th>
+                    <th>Assigned Professor</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="app : ${applications}">
+                    <td>
+                        <!-- only submitted applications can be routed -->
+                        <input type="checkbox" name="applicationIds" th:value="${app.id}"
+                               th:if="${app.status.name() == 'SUBMITTED'}">
+                    </td>
+                    <td th:text="${app.fullName}">Jane Doe</td>
+                    <td th:text="${app.email}">jane@example.com</td>
+                    <td th:text="${app.desiredResearchField}">Machine Learning</td>
+                    <td th:text="${#strings.listJoin(app.preferredProfessors.![name], ', ')}">Prof. Smith, Prof. Lee</td>
+                    <td th:text="${app.status}">SUBMITTED</td>
+                    <td th:text="${app.assignedProfessor != null} ? ${app.assignedProfessor.name} : ''">Prof. Smith</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
 </main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>

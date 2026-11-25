@@ -2,13 +2,16 @@ package com.example.demo.controller;
 
 
 import com.example.demo.dto.ApplicantDTO;
+import com.example.demo.dto.ApplicantFileDTO;
 import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.ApplicationStatus;
-import com.example.demo.services.MailSenderService;
-import com.example.demo.services.ApplicantReviewService;
-import com.example.demo.services.DeadlinePassedException;
+import com.example.demo.services.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +20,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.net.URI;
+
 @Controller
 @Transactional
 public class ApplicantReviewController {
+
+    @Autowired
+    ApplicantFileService applicantFileService;
 
     @Autowired
     private ApplicantReviewService applicantReviewService;
@@ -100,5 +109,25 @@ public class ApplicantReviewController {
         System.out.println("decision: " + decision);
 
         return "redirect:/evaluations/{profID}";
+    }
+
+    @GetMapping("professors/{id1}/applicants/{id2}/files/{id3}")
+    ResponseEntity<?> downloadApplicationFile(@PathVariable("id1") Long profId, @PathVariable("id2") Long applicantId, @PathVariable("id3") Long fileId, Model model){
+        try{
+            ApplicantFileDTO dto = applicantFileService.getApplicantFileById(fileId);
+            byte[] pdf = dto.getData();
+            ResponseEntity<?> response = ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; "+ "filename=\"" + dto.getFileName() +"\""
+                    )
+                    .contentLength(pdf.length)
+                    .body(pdf);
+            return response;
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 }

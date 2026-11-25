@@ -9,7 +9,7 @@
     <p th:if="${deadline != null}" th:text="|Applications close ${#temporals.format(deadline, 'MMMM d, yyyy h:mm a')}|"></p>
     <p th:if="${error}" th:text="${error}"></p>
 
-<form th:action="@{/apply}" th:object="${form}" method="post">
+<form th:action="@{/apply}" th:object="${form}" method="post" enctype="multipart/form-data">
     <p>
         <label for="fullName">Full name</label>
         <input id="fullName" type="text" th:field="*{fullName}">
@@ -34,6 +34,11 @@
                    th:text="${p.name + ' (' + #strings.setJoin(p.researchFields, ', ') + ')'}"></label>
         </div>
     </fieldset>
+    <p>
+        <label for="files">Supporting Files</label>
+        <input id="files" type="file" name="files[]" multiple th:field="*{files}">
+        <span th:if="${#fields.hasErrors('files')}" th:errors="*{files}"></span>
+    </p>
 
     <p><button type="submit">Submit application</button></p>
 </form>

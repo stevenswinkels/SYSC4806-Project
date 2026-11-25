@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ApplicantDTO;
+import com.example.demo.dto.ApplicantFileDTO;
 import com.example.demo.dto.ProfDTO;
 import com.example.demo.model.Applicant;
+import com.example.demo.model.ApplicantFile;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
+import com.example.demo.services.ApplicantFileService;
 import com.example.demo.services.ApplicantReviewService;
 import com.example.demo.services.DeadlinePassedException;
 
@@ -16,9 +19,12 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +47,9 @@ class ApplicantReviewControllerTest {
 
     @MockBean
     ApplicantReviewService service;
+
+    @MockBean
+    ApplicantFileService fileService;
 
 
     Professor professor;
@@ -68,6 +77,10 @@ class ApplicantReviewControllerTest {
         when(service.getApplicantAssignedToProf(1L, 2L)).thenThrow(new NotFoundException("prof not found"));
 
         when(service.getEvaluationDeadline()).thenReturn(LocalDateTime.of(2026, 12, 1, 17, 0));
+
+        ApplicantFileDTO applicantFileDTO = new ApplicantFileDTO(new ApplicantFile("myfile.pdf", "contents".getBytes(StandardCharsets.UTF_8)));
+        when(fileService.getApplicantFileById(1L)).thenReturn(applicantFileDTO);
+        when(fileService.getApplicantFileById(2L)).thenThrow(new NotFoundException("applicant file not found"));
     }
 
     @Test
@@ -137,5 +150,21 @@ class ApplicantReviewControllerTest {
         mvc.perform(post("/evaluations/1/1").param("decision", "DONT_RECOMMEND"))
                 .andExpect(redirectedUrl("/evaluations/1"))
                 .andExpect(flash().attribute("error", "The evaluation deadline has passed"));
+    }
+
+    @Test
+    void downloadExistingFile() throws Exception {
+        mvc.perform(get("/professors/1/applicants/1/files/1")).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(header().string(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"myfile.pdf\""
+                ))
+                .andExpect(content().bytes("contents".getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Test
+    void downloadNonExistingFile() throws Exception {
+        mvc.perform(get("/professors/1/applicants/1/files/2")).andExpect(status().isNotFound());
     }
 }

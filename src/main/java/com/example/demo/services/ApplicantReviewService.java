@@ -1,11 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.ApplicantDTO;
+import com.example.demo.dto.ApplicantFileDTO;
 import com.example.demo.dto.ProfDTO;
-import com.example.demo.model.Applicant;
-import com.example.demo.model.ApplicationStatus;
-import com.example.demo.model.Evaluation;
-import com.example.demo.model.Professor;
+import com.example.demo.model.*;
 import com.example.demo.repository.ApplicantRepository;
 import com.example.demo.repository.EvaluationRepository;
 import com.example.demo.repository.ProfessorRepository;
@@ -36,6 +34,9 @@ public class ApplicantReviewService {
 
     @Autowired
     private DeadlineService deadlineService;
+
+    @Autowired
+    private ApplicantFileService applicantFileService;
 
     public ProfDTO getProf(Long id) throws NotFoundException {
         Optional<Professor> prof = professorRepository.findById(id);
