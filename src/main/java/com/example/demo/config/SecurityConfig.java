@@ -22,8 +22,9 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/", "/apply", "/apply/**", "/login", "/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/professors/create").hasRole("ADMIN")
-                        .requestMatchers("/professors/**").hasAnyRole("ADMIN", "PROFESSOR")
+                        // admin-only; must stay ABOVE /professor/** because the first matching rule wins
+                        .requestMatchers("/professor/create", "/professor/create/**").hasRole("ADMIN")
+                        .requestMatchers("/professor/*/profile/edit").hasAnyRole("ADMIN", "PROFESSOR")
                         .requestMatchers("/professor/**", "/evaluations/**").hasRole("PROFESSOR")
                         .anyRequest().authenticated())
                 .formLogin(form -> form

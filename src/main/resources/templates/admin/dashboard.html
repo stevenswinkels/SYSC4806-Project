@@ -9,6 +9,7 @@
 
 <main class="container">
     <h1>Submitted Applications</h1>
+    <p><a href="/professor/create" th:href="@{/professor/create}">Add professor profile</a></p>
 
     <!-- filter the applications by research field -->
     <form class="inline-form" method="get" action="/admin" th:action="@{/admin}">
@@ -66,6 +67,7 @@
         </tbody>
     </table>
     </div>
+
 </main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
