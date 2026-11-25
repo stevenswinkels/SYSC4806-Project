@@ -53,21 +53,30 @@ public class AdminController {
         return "admin/dashboard";
     }
 
+    // routes one application and emails the prof, only SUBMITTED applications can be routed
+    private boolean routeApplication(Applicant applicant, Professor professor) {
+        if (applicant.getStatus() != ApplicationStatus.SUBMITTED) {
+            return false;
+        }
+        applicant.assignTo(professor);
+        applicant.setStatus(ApplicationStatus.SENT_TO_PROFESSORS);
+        applicantRepository.save(applicant);
+        try {
+            mailSenderService.sendNotificationOfAssignment(professor);
+        } catch (Exception e) {
+            // routing still counts if the email fails, e.g. no smtp server running locally
+            System.out.println("could not email " + professor.getEmail() + ": " + e.getMessage());
+        }
+        return true;
+    }
+
     // send the application to the chosen prof and email them about it
     @PostMapping("/admin/applications/{id}/route")
     String route(@PathVariable("id") Long id, @RequestParam("professorId") Long professorId) {
         Applicant applicant = applicantRepository.findById(id).orElse(null);
         Professor professor = professorRepository.findById(professorId).orElse(null);
-        if (applicant != null && professor != null && applicant.getStatus() != ApplicationStatus.DECIDED) {
-            applicant.assignTo(professor);
-            applicant.setStatus(ApplicationStatus.SENT_TO_PROFESSORS);
-            applicantRepository.save(applicant);
-            try {
-                mailSenderService.sendNotificationOfAssignment(professor);
-            } catch (Exception e) {
-                // routing still counts if the email fails, e.g. no smtp server running locally
-                System.out.println("could not email " + professor.getEmail() + ": " + e.getMessage());
-            }
+        if (applicant != null && professor != null) {
+            routeApplication(applicant, professor);
         }
         return "redirect:/admin";
     }
