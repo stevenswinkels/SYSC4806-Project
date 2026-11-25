@@ -80,4 +80,17 @@ public class AdminController {
         }
         return "redirect:/admin";
     }
+
+    // route all the selected applications to one prof
+    @PostMapping("/admin/applications/route")
+    String routeSelected(@RequestParam(name = "applicationIds", required = false) List<Long> applicationIds,
+                         @RequestParam("professorId") Long professorId) {
+        Professor professor = professorRepository.findById(professorId).orElse(null);
+        if (professor != null && applicationIds != null) {
+            for (Long id : applicationIds) {
+                applicantRepository.findById(id).ifPresent(a -> routeApplication(a, professor));
+            }
+        }
+        return "redirect:/admin";
+    }
 }

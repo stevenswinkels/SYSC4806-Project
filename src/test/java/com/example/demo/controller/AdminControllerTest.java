@@ -134,4 +134,40 @@ class AdminControllerTest {
                 .andExpect(content().string(containsString("Jane Roe")))
                 .andExpect(content().string(not(containsString("John Doe"))));
     }
+
+    @Test
+    void routeSelectedAssignsProfessorAndNotifiesForEach() throws Exception {
+        when(applicantRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(applicantRepository.findById(2L)).thenReturn(Optional.of(jane));
+        when(professorRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(professor));
+
+        mvc.perform(post("/admin/applications/route")
+                        .param("applicationIds", "1", "2")
+                        .param("professorId", "1"))
+                .andExpect(redirectedUrl("/admin"));
+
+        assertEquals(professor, john.getAssignedProfessor());
+        assertEquals(professor, jane.getAssignedProfessor());
+        assertEquals(ApplicationStatus.SENT_TO_PROFESSORS, john.getStatus());
+        assertEquals(ApplicationStatus.SENT_TO_PROFESSORS, jane.getStatus());
+        verify(mailSenderService, times(2)).sendNotificationOfAssignment(professor);
+    }
+
+    @Test
+    void routeSelectedSkipsDecidedAndUnknownApplications() throws Exception {
+        john.setStatus(ApplicationStatus.DECIDED);
+        when(applicantRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(applicantRepository.findById(99L)).thenReturn(Optional.empty());
+        when(professorRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(professor));
+
+        mvc.perform(post("/admin/applications/route")
+                        .param("applicationIds", "1", "99")
+                        .param("professorId", "1"))
+                .andExpect(redirectedUrl("/admin"));
+
+        assertNull(john.getAssignedProfessor());
+        assertEquals(ApplicationStatus.DECIDED, john.getStatus());
+        verify(applicantRepository, never()).save(any());
+        verify(mailSenderService, never()).sendNotificationOfAssignment(any());
+    }
 }
