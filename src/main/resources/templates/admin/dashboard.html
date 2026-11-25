@@ -14,6 +14,16 @@
     <form class="inline-form" method="get" action="/admin" th:action="@{/admin}">
         <input type="text" name="field" placeholder="Filter by research field"
                th:value="${param.field}">
+        <select name="preferred">
+            <option value="">Any preferred professor</option>
+            <option th:each="prof : ${professors}" th:value="${prof.id}" th:text="${prof.name}"
+                    th:selected="${prof.id == selectedPreferred}"></option>
+        </select>
+        <select name="status">
+            <option value="">Any status</option>
+            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+                    th:selected="${s == selectedStatus}"></option>
+        </select>
         <button type="submit">Filter</button>
         <a href="/admin" th:href="@{/admin}">Clear</a>
     </form>
