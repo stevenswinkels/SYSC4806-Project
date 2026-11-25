@@ -1,12 +1,15 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.Applicant;
+import com.example.demo.model.ApplicantFile;
 import com.example.demo.model.ApplicationStatus;
 import com.example.demo.model.Professor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +17,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@Transactional
 class ApplicantRepositoryTest {
 
     @Autowired
@@ -74,5 +78,13 @@ class ApplicantRepositoryTest {
 
         assertEquals(1, found.size());
         assertEquals("mine@example.com", found.get(0).getEmail());
+    }
+
+    @Test
+    void savesApplicantFiles(){
+        Applicant a = applicant("test@example.org", ApplicationStatus.SUBMITTED);
+        a.addApplicantFile(new ApplicantFile("test.txt", "xyz".getBytes(StandardCharsets.UTF_8)));
+        a = applicants.save(a);
+        assertFalse(a.getApplicantFiles().isEmpty());
     }
 }

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,8 +23,7 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
@@ -54,8 +55,22 @@ class ApplicantControllerTest {
         Applicant saved = new Applicant();
         saved.setId(7L);
         when(service.submit(any(ApplicantForm.class))).thenReturn(saved);
+        MockMultipartFile file1 = new MockMultipartFile(
+                "files",
+                "resume.pdf",
+                MediaType.APPLICATION_PDF_VALUE,
+                "Resume content".getBytes()
+        );
 
-        mvc.perform(post("/apply")
+        MockMultipartFile file2 = new MockMultipartFile(
+                "files",
+                "cover-letter.pdf",
+                MediaType.APPLICATION_PDF_VALUE,
+                "Cover letter content".getBytes()
+        );
+        mvc.perform(multipart("/apply")
+                        .file(file1)
+                        .file(file2)
                         .param("fullName", "Bhagya")
                         .param("email", "bhagya@example.com")
                         .param("desiredResearchField", "Robotics"))
@@ -65,7 +80,14 @@ class ApplicantControllerTest {
 
     @Test
     void invalidPostRedisplaysFormWithErrors() throws Exception {
-        mvc.perform(post("/apply")
+        MockMultipartFile file1 = new MockMultipartFile(
+                "files",
+                "resume.pdf",
+                MediaType.TEXT_MARKDOWN_VALUE,
+                "Resume content".getBytes()
+        );
+        mvc.perform(multipart("/apply")
+                        .file(file1)
                         .param("fullName", "")
                         .param("email", "not-an-email")
                         .param("desiredResearchField", ""))

@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,8 @@ public class ApplicantForm {
     @NotBlank @Email private String email;
     @NotBlank private String desiredResearchField;
     private List<Long> professorIds = new ArrayList<>();
+    private List<MultipartFile> files = new ArrayList<>();
+
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
@@ -21,4 +24,10 @@ public class ApplicantForm {
     public void setDesiredResearchField(String f) { this.desiredResearchField = f; }
     public List<Long> getProfessorIds() { return professorIds; }
     public void setProfessorIds(List<Long> professorIds) { this.professorIds = professorIds; }
+    public void setFiles(List<MultipartFile> files) {
+        this.files = files;
+    }
+    public List<MultipartFile> getFiles() {
+        return files;
+    }
 }

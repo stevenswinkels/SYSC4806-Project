@@ -16,6 +16,9 @@
     <span th:if="${#lists.isEmpty(applicant.preferredProfessors)}">none selected</span>
     <span th:each="p, st : ${applicant.preferredProfessors}"
           th:text="${p.name + (st.last ? '' : ', ')}"></span>
+  </li>Uploaded Files:
+  <li th:each="file : ${applicant.getApplicantFiles()}">
+    <span th:text="${file.getFileName()}"></span>
   </li>
 </ul>
 <p><a th:href="@{/apply}">Submit another application</a></p>

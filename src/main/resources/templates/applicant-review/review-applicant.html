@@ -25,6 +25,16 @@
             <th>Application Submitted At</th>
             <td th:text="${applicant.getSubmittedAt()}" id="submittedAt"></td>
         </tr>
+        <th:block th:if="${!applicant.getApplicantFiles().isEmpty()}" >Application Files:</th:block>
+        <tr
+                th:each="file : ${applicant.getApplicantFiles()}">
+            <td th:text="${file.getFileName()}">
+            </td>
+            <td>
+                <a th:href="@{/professors/__${prof.getId()}__/applicants/__${applicant.getId()}__/files/__${file.getId()}__}">Download</a>
+            </td>
+
+        </tr>
     </table>
 
 </div>

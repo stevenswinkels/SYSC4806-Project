@@ -33,6 +33,21 @@ public class Applicant {
     @Enumerated(EnumType.STRING)
     private FinalDecision finalDecision;   // null = admin hasn't decided yet
 
+    @OneToMany
+    private List<ApplicantFile> applicantFiles = new ArrayList<>();
+
+    public List<ApplicantFile> getApplicantFiles() {
+        return applicantFiles;
+    }
+
+    public void setApplicantFiles(List<ApplicantFile> applicantFiles) {
+        this.applicantFiles = applicantFiles;
+    }
+
+    public void addApplicantFile(ApplicantFile applicantFile) {
+        this.applicantFiles.add(applicantFile);
+    }
+
     public Applicant() {};
 
     public Long getId() {
