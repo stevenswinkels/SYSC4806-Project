@@ -5,6 +5,7 @@ import com.example.demo.services.ProfessorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
 @RequestMapping("/professor")
@@ -17,6 +18,7 @@ public class ProfessorProfileController {
     }
 
     // Display form to edit professor profile
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('PROFESSOR') and @professorAccess.isCurrentProfessor(authentication, #id))")
     @GetMapping("/{id}/profile/edit")
     public String showEditProfileForm(@PathVariable("id") Long id, Model model) {
         ProfDTO profDTO = professorService.getProfessorById(id);
@@ -25,6 +27,7 @@ public class ProfessorProfileController {
     }
 
     // Process profile submission
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('PROFESSOR') and @professorAccess.isCurrentProfessor(authentication, #id))")
     @PostMapping("/{id}/profile/edit")
     public String updateProfile(@PathVariable("id") Long id, @ModelAttribute("professor") ProfDTO profDTO) {
         professorService.updateProfessorProfile(id, profDTO);

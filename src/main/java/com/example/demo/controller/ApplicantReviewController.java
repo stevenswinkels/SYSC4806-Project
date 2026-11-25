@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.net.URI;
 
@@ -37,8 +38,9 @@ public class ApplicantReviewController {
         return "redirect:/evaluations/{profID}";
     }
 
+    @PreAuthorize("hasRole('PROFESSOR') and @professorAccess.isCurrentProfessor(authentication, #profID)")
     @GetMapping("/evaluations/{profID}")
-    String evaluations(@PathVariable("profID") Long profID, Model model) {
+    public String evaluations(@PathVariable("profID") Long profID, Model model) {
 
         try{
         ProfDTO prof = applicantReviewService.getProf(profID);
@@ -54,10 +56,12 @@ public class ApplicantReviewController {
 
 
 
+    @PreAuthorize("hasRole('PROFESSOR') and @professorAccess.isCurrentProfessor(authentication, #profID)"
+            + " and @professorAccess.isAssignedToCurrent(authentication, #applicantID)")
     @GetMapping("/evaluations/{profID}/{applicantID}")
-    String evaluateApplication(@PathVariable("profID") Long profID,
-                                @PathVariable("applicantID") Long applicantID,
-                                Model model) {
+    public String evaluateApplication(@PathVariable("profID") Long profID,
+                                      @PathVariable("applicantID") Long applicantID,
+                                      Model model) {
         try {
         ApplicantDTO applicant = applicantReviewService.getApplicantAssignedToProf(applicantID, profID);
         ProfDTO prof = applicantReviewService.getProf(profID);
@@ -80,15 +84,17 @@ public class ApplicantReviewController {
 
     @GetMapping("evaluations/{profID}/{applicantID}/")
     String postEvaluateApplicationsRedirect(@PathVariable("profID") Long profID,
-                                    @PathVariable("applicantID") Long applicantID){
+                                            @PathVariable("applicantID") Long applicantID){
         return "redirect:/evaluations/{profID}/{applicantID}";
     }
 
+    @PreAuthorize("hasRole('PROFESSOR') and @professorAccess.isCurrentProfessor(authentication, #profID)"
+            + " and @professorAccess.isAssignedToCurrent(authentication, #applicantID)")
     @PostMapping("evaluations/{profID}/{applicantID}")
-    String postEvaluateApplications(@PathVariable("profID") Long profID,
-                                    @PathVariable("applicantID") Long applicantID,
-                                    @RequestParam(name = "decision", required = true) String decision,
-                                    RedirectAttributes redirectAttributes){
+    public String postEvaluateApplications(@PathVariable("profID") Long profID,
+                                           @PathVariable("applicantID") Long applicantID,
+                                           @RequestParam(name = "decision", required = true) String decision,
+                                           RedirectAttributes redirectAttributes){
         try {
             ApplicationStatus verdict = ApplicationStatus.valueOf(decision);
             applicantReviewService.assignVerdict(profID, applicantID, verdict);
