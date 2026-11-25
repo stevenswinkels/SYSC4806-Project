@@ -116,4 +116,22 @@ class AdminControllerTest {
         verify(applicantRepository, never()).save(john);
         verify(mailSenderService, never()).sendNotificationOfAssignment(professor);
     }
+
+    @Test
+    void dashboardFiltersByPreferredProfessor() throws Exception {
+        john.setPreferredProfessors(List.of(professor));
+
+        mvc.perform(get("/admin").param("preferred", "1")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("John Doe")))
+                .andExpect(content().string(not(containsString("Jane Roe"))));
+    }
+
+    @Test
+    void dashboardFiltersByStatus() throws Exception {
+        jane.setStatus(ApplicationStatus.DECIDED);
+
+        mvc.perform(get("/admin").param("status", "DECIDED")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Jane Roe")))
+                .andExpect(content().string(not(containsString("John Doe"))));
+    }
 }

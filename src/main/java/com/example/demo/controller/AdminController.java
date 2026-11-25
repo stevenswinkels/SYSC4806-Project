@@ -25,17 +25,31 @@ public class AdminController {
     @Autowired
     private MailSenderService mailSenderService;
 
-    // list all applications, or only the ones whose research field contains the filter
+    // list all applications, narrowed down by research field, preferred professor and status
     @GetMapping("/admin")
-    String dashboard(@RequestParam(name = "field", required = false) String field, Model model) {
+    String dashboard(@RequestParam(name = "field", required = false) String field,
+                     @RequestParam(name = "preferred", required = false) Long preferred,
+                     @RequestParam(name = "status", required = false) ApplicationStatus status,
+                     Model model) {
         List<Applicant> applications = applicantRepository.findAll();
         if (field != null && !field.isBlank()) {
             applications = applications.stream()
                     .filter(a -> a.getDesiredResearchField().toLowerCase().contains(field.toLowerCase()))
                     .toList();
         }
+        if (preferred != null) {
+            applications = applications.stream()
+                    .filter(a -> a.getPreferredProfessors().stream().anyMatch(p -> preferred.equals(p.getId())))
+                    .toList();
+        }
+        if (status != null) {
+            applications = applications.stream().filter(a -> a.getStatus() == status).toList();
+        }
         model.addAttribute("applications", applications);
         model.addAttribute("professors", professorRepository.findAll());
+        model.addAttribute("statuses", ApplicationStatus.values());
+        model.addAttribute("selectedPreferred", preferred);
+        model.addAttribute("selectedStatus", status);
         return "admin/dashboard";
     }
 
