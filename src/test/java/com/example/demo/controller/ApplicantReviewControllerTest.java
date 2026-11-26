@@ -79,8 +79,8 @@ class ApplicantReviewControllerTest {
         when(service.getEvaluationDeadline()).thenReturn(LocalDateTime.of(2026, 12, 1, 17, 0));
 
         ApplicantFileDTO applicantFileDTO = new ApplicantFileDTO(new ApplicantFile("myfile.pdf", "contents".getBytes(StandardCharsets.UTF_8)));
-        when(fileService.getApplicantFileById(1L)).thenReturn(applicantFileDTO);
-        when(fileService.getApplicantFileById(2L)).thenThrow(new NotFoundException("applicant file not found"));
+        when(fileService.getFileForApplicant(1L, 1L)).thenReturn(applicantFileDTO);
+        when(fileService.getFileForApplicant(2L, 1L)).thenThrow(new NotFoundException("applicant file not found"));
     }
 
     @Test

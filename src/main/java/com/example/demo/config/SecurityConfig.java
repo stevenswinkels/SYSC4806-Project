@@ -25,7 +25,8 @@ public class SecurityConfig {
                         // admin-only; must stay ABOVE /professor/** because the first matching rule wins
                         .requestMatchers("/professor/create", "/professor/create/**").hasRole("ADMIN")
                         .requestMatchers("/professor/*/profile/edit").hasAnyRole("ADMIN", "PROFESSOR")
-                        .requestMatchers("/professor/**", "/evaluations/**").hasRole("PROFESSOR")
+                        // /professors/** covers the applicant file download endpoint
+                        .requestMatchers("/professor/**", "/professors/**", "/evaluations/**").hasRole("PROFESSOR")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
