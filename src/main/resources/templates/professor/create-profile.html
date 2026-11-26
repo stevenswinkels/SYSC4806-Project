@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Professor Profile</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Create Professor Profile')}"></head>
 <body>
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <main class="container">
+    <p><a th:href="@{/admin}">Back to administrator dashboard</a></p>
     <h2>Create Professor Profile</h2>
 
     <form th:action="@{/professor/create}" th:object="${professor}" method="post">
@@ -27,5 +27,7 @@
         <br/>
         <button type="submit">Create Profile</button>
     </form>
+    </main>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

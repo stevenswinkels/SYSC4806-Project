@@ -9,6 +9,7 @@
     <p th:if="${error}" th:text="${error}"></p>
     <p th:text="|Hello ${prof.getName()}!|"></p>
     <p th:text="|You have ${prof.getApplicants().size()} applications to review|"></p>
+    <p><a class="button" th:href="@{/professor/{id}/profile/edit(id=${prof.id})}">Edit my profile</a></p>
 </div>
 <!-- List out the applications assigned to the prof that haven't been evaluated yet -->
 <div th:if="${prof.getApplicants().size() > 0}">

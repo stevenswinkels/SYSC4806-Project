@@ -26,9 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -81,6 +79,13 @@ class ApplicantReviewControllerTest {
         ApplicantFileDTO applicantFileDTO = new ApplicantFileDTO(new ApplicantFile("myfile.pdf", "contents".getBytes(StandardCharsets.UTF_8)));
         when(fileService.getFileForApplicant(1L, 1L)).thenReturn(applicantFileDTO);
         when(fileService.getFileForApplicant(2L, 1L)).thenThrow(new NotFoundException("applicant file not found"));
+    }
+
+    @Test
+    void evaluationsRootRedirectsToProfessorHome() throws Exception {
+        mvc.perform(get("/evaluations"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/professor/applicants"));
     }
 
     @Test

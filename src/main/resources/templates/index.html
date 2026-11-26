@@ -7,6 +7,16 @@
 <main class="container">
     <h1>Graduate Admissions Management System</h1>
     <p>Applicants submit their files, professors evaluate assigned candidates, and administrators make the final decision.</p>
+
+    <section aria-labelledby="workflow-heading">
+        <h2 id="workflow-heading">Choose a workflow</h2>
+        <p><a class="button" th:href="@{/apply}">Apply to the program</a></p>
+        <p><a class="button" th:href="@{/admin}">Administrator tasks</a></p>
+        <p><a class="button" th:href="@{/professor/applicants}">Professor tasks</a></p>
+        <p th:if="${isAdmin}">
+            <a class="button" th:href="@{/professor/create}">Create a professor profile</a>
+        </p>
+    </section>
 </main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>

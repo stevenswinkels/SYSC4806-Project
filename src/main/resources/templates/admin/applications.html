@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Final Decisions')}"></head>
+<head th:replace="~{fragments/layout :: head('Recommendations and Final Decisions')}"></head>
 <body>
 <header th:replace="~{fragments/layout :: header}"></header>
 
 <main class="container">
+    <p><a th:href="@{/admin}">Back to administrator dashboard</a></p>
     <h1>Final Decisions</h1>
     <p th:if="${applicants.isEmpty()}">No recommendations yet.</p>
 
@@ -25,7 +26,6 @@
         </table>
     </div>
 </main>
-
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

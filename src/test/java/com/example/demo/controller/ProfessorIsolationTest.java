@@ -13,8 +13,11 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.example.demo.model.ApplicantFile;
 import com.example.demo.repository.ApplicantFileRepository;
@@ -68,10 +71,26 @@ class ProfessorIsolationTest {
     }
 
     @Test
+    @WithUserDetails("admin@example.com")
+    void adminCanReachProfessorProfileCreationFromHome() throws Exception {
+        mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Create a professor profile")));
+    }
+
+    @Test
     @WithUserDetails("turing@example.com")
     void professorOpensTheirOwnApplicantList() throws Exception {
         mvc.perform(get("/evaluations/" + idOf("turing@example.com")))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithUserDetails("turing@example.com")
+    void evaluationsRootRedirectsToCurrentProfessorsApplicantList() throws Exception {
+        mvc.perform(get("/evaluations"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/professor/applicants"));
     }
 
     @Test

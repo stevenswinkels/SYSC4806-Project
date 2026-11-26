@@ -9,7 +9,10 @@
 
 <main class="container">
     <h1>Submitted Applications</h1>
-    <p><a href="/professor/create" th:href="@{/professor/create}">Add professor profile</a></p>
+    <p>
+        <a class="button" href="/professor/create" th:href="@{/professor/create}">Add professor profile</a>
+        <a class="button" th:href="@{/admin/applications}">Open recommendation and final-decision queue</a>
+    </p>
 
     <!-- filter the applications by research field -->
     <form class="inline-form" method="get" action="/admin" th:action="@{/admin}">
@@ -26,7 +29,7 @@
                     th:selected="${s == selectedStatus}"></option>
         </select>
         <button type="submit">Filter</button>
-        <a href="/admin" th:href="@{/admin}">Clear</a>
+        <a class="button" href="/admin" th:href="@{/admin}">Clear</a>
     </form>
 
     <p th:if="${#lists.isEmpty(applications)}">No applications found.</p>

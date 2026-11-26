@@ -61,18 +61,24 @@ main.container {
     text-decoration: none;
 }
 
+.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
 .site-nav a {
     color: #fff;
     text-decoration: none;
-    margin-left: 16px;
-}
-
-.site-nav a:first-child {
-    margin-left: 0;
 }
 
 .site-nav a:hover {
     text-decoration: underline;
+}
+
+.site-nav .signout-form {
+    margin: 0;
 }
 
 .site-nav form button {
@@ -81,6 +87,7 @@ main.container {
     color: inherit;
     font: inherit;
     cursor: pointer;
+    margin: 0;
     padding: 0;
 }
 
@@ -179,4 +186,88 @@ table .inline-form {
 
 .inline-form button {
     margin-top: 0;
+}
+
+.inline-form .button {
+    margin-top: 0;
+}
+
+.error-page {
+    display: grid;
+    place-items: center;
+    min-height: calc(100vh - 150px);
+}
+
+.error-card {
+    width: min(100%, 680px);
+    padding: 48px 32px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(22, 58, 90, 0.08);
+    text-align: center;
+}
+
+.error-code {
+    display: inline-block;
+    margin: 0;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #eef2f6;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.error-eyebrow {
+    margin: 20px 0 4px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.error-card h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    line-height: 1.2;
+}
+
+.error-copy {
+    max-width: 500px;
+    margin: 16px auto 0;
+    color: var(--muted);
+}
+
+.error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.error-actions .button {
+    margin-top: 0;
+}
+
+.error-actions .button-secondary {
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--primary);
+}
+
+.error-actions .button-secondary:hover {
+    background: #eef2f6;
+}
+
+@media (max-width: 480px) {
+    .error-card {
+        padding: 36px 20px;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
 }

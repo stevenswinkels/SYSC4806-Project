@@ -33,6 +33,11 @@ public class ApplicantReviewController {
     @Autowired
     private ApplicantReviewService applicantReviewService;
 
+    @GetMapping("/evaluations")
+    String professorHome() {
+        return "redirect:/professor/applicants";
+    }
+
     @GetMapping("/evaluations/{profID}/")
     String evaluations(@PathVariable("profID") Long profID){
         return "redirect:/evaluations/{profID}";
