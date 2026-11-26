@@ -43,4 +43,12 @@ public class ApplicantFileService {
         }
         throw new NotFoundException("Applicant file with id " + id + " not found");
     }
+
+    public ApplicantFileDTO getFileForApplicant(Long fileId, Long applicantId) throws NotFoundException {
+        if (fileId == null || applicantId == null) throw new NotFoundException("null id");
+        return applicantFileRepository.findByIdAndApplicantId(fileId, applicantId)
+                .map(ApplicantFileDTO::new)
+                .orElseThrow(() -> new NotFoundException(
+                        "File " + fileId + " not found for applicant " + applicantId));
+    }
 }

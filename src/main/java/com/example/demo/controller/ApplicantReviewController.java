@@ -111,23 +111,23 @@ public class ApplicantReviewController {
         return "redirect:/evaluations/{profID}";
     }
 
-    @GetMapping("professors/{id1}/applicants/{id2}/files/{id3}")
-    ResponseEntity<?> downloadApplicationFile(@PathVariable("id1") Long profId, @PathVariable("id2") Long applicantId, @PathVariable("id3") Long fileId, Model model){
-        try{
-            ApplicantFileDTO dto = applicantFileService.getApplicantFileById(fileId);
+    @PreAuthorize("hasRole('PROFESSOR') and @professorAccess.isCurrentProfessor(authentication, #profId)"
+            + " and @professorAccess.isAssignedToCurrent(authentication, #applicantId)")
+    @GetMapping("/professors/{profId}/applicants/{applicantId}/files/{fileId}")
+    public ResponseEntity<?> downloadApplicationFile(@PathVariable("profId") Long profId,
+                                                     @PathVariable("applicantId") Long applicantId,
+                                                     @PathVariable("fileId") Long fileId) {
+        try {
+            ApplicantFileDTO dto = applicantFileService.getFileForApplicant(fileId, applicantId);
             byte[] pdf = dto.getData();
-            ResponseEntity<?> response = ResponseEntity.ok()
+            return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; "+ "filename=\"" + dto.getFileName() +"\""
-                    )
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + dto.getFileName() + "\"")
                     .contentLength(pdf.length)
                     .body(pdf);
-            return response;
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-
     }
 }
