@@ -61,18 +61,24 @@ main.container {
     text-decoration: none;
 }
 
+.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
 .site-nav a {
     color: #fff;
     text-decoration: none;
-    margin-left: 16px;
-}
-
-.site-nav a:first-child {
-    margin-left: 0;
 }
 
 .site-nav a:hover {
     text-decoration: underline;
+}
+
+.site-nav .signout-form {
+    margin: 0;
 }
 
 .site-nav form button {
@@ -81,6 +87,7 @@ main.container {
     color: inherit;
     font: inherit;
     cursor: pointer;
+    margin: 0;
     padding: 0;
 }
 
@@ -178,5 +185,9 @@ table .inline-form {
 }
 
 .inline-form button {
+    margin-top: 0;
+}
+
+.inline-form .button {
     margin-top: 0;
 }

@@ -78,7 +78,10 @@ class AdminControllerTest {
                 .andExpect(view().name("admin/dashboard"))
                 .andExpect(content().string(containsString("John Doe")))
                 .andExpect(content().string(containsString("Jane Roe")))
-                .andExpect(content().string(containsString("prof name")));
+                .andExpect(content().string(containsString("prof name")))
+                .andExpect(content().string(containsString("class=\"button\" href=\"/professor/create\"")))
+                .andExpect(content().string(containsString("class=\"button\" href=\"/admin\"")))
+                .andExpect(content().string(containsString(">Clear</a>")));
     }
 
     @Test

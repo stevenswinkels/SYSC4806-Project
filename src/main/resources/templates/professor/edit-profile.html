@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Professor Profile</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Edit Professor Profile')}"></head>
 <body>
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <main class="container">
+    <p th:if="${isAdmin}"><a th:href="@{/admin}">Back to administrator dashboard</a></p>
+    <p th:if="${isProfessor}">
+        <a th:href="@{/professor/applicants}">Back to professor tasks</a>
+    </p>
     <h2>Edit Profile</h2>
 
     <div th:if="${param.success}" style="color: green;">
@@ -33,5 +36,7 @@
         <br/>
         <button type="submit">Save Changes</button>
     </form>
+    </main>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>
