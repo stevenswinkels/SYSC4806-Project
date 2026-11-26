@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Access restricted')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container error-page">
+    <section class="error-card" aria-labelledby="error-title">
+        <p class="error-code">403</p>
+        <p class="error-eyebrow">Access restricted</p>
+        <h1 id="error-title">You can’t access this page</h1>
+        <p class="error-copy">
+            Your account doesn’t have permission to view this page.
+            Return to a dashboard available to your role, or sign in with another account.
+        </p>
+
+        <div class="error-actions">
+            <a class="button" th:href="@{/}" th:if="${!isAdmin and !isProfessor}">Return home</a>
+            <a class="button" th:href="@{/admin}" th:if="${isAdmin}">Administrator dashboard</a>
+            <a class="button" th:href="@{/professor/applicants}" th:if="${isProfessor}">My applicants</a>
+            <a class="button button-secondary" th:href="@{/}" th:if="${isAdmin or isProfessor}">Home</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

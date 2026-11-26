@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/", "/apply", "/apply/**", "/login", "/error").permitAll()
+                        .requestMatchers("/", "/apply", "/apply/**", "/login", "/error", "/access-denied").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // admin-only; must stay ABOVE /professor/** because the first matching rule wins
                         .requestMatchers("/professor/create", "/professor/create/**").hasRole("ADMIN")
@@ -31,7 +31,8 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .successHandler(new RoleBasedLandingHandler())
                         .permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll())
+                .exceptionHandling(exceptions -> exceptions.accessDeniedPage("/access-denied"));
         return http.build();
     }
 
